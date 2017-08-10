@@ -63,7 +63,7 @@ class Application(tornado.web.Application):
     # Change these to query string parameters, since
     # current format can lead to pattern matching issues.
     callbacks = [
-        (r"/", handlers.MainHandler),
+        (r"/", handlers.MainHandler, dict(baseUrl=base_url),
 
         url(r"/topologies", handlers.ListTopologiesHandler, dict(baseUrl=base_url),
             name='topologies'),
@@ -119,7 +119,7 @@ class Application(tornado.web.Application):
 
         ## Static files
         (r"/static/(.*)", tornado.web.StaticFileHandler,
-         dict(path=settings['static_path']))
+         dict(path=settings['static_path'])))
 
     ]
 

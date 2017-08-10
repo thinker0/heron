@@ -18,8 +18,11 @@ from heron.tools.ui.src.python.handlers import base
 class MainHandler(base.BaseHandler):
   ''' MainHandler'''
 
+  def initialize(self, baseUrl):
+    self.baseUrl = baseUrl
+
   def get(self):
     '''
     :return:
     '''
-    self.redirect(u"/topologies")
+    self.redirect(u"%s/topologies" % self.baseUrl)
