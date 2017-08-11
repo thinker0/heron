@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Heron Admin</title>
     <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport">
+    <link rel="icon" type="image/png" href="{{ static_url('img/logo54x54.png') }}">
     <script src="{{ static_url('js/html5-trunk.js') }}"></script>
     <link href="{{ static_url('icomoon/style.css') }}" rel="stylesheet">
 
@@ -65,7 +66,7 @@
         <img src="{{ static_url('img/logo54x54.png') }}" alt="Heron">
       </div>
       <!-- <div class="logo">H<span>eron</span></div> -->
-      {% module Template("nav.html", active=active, className=function) %}
+      {% module Template("nav.html", baseUrl=baseUrl, active=active, className=function) %}
     </nav>
     <!-- Main navigation end -->
 

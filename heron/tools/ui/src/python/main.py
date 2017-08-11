@@ -56,6 +56,7 @@ class Application(tornado.web.Application):
         static_url_prefix=static_prefix,
         gzip=True,
         debug=True,
+        baseUrl=base_url,
         default_handler_class=handlers.NotFoundHandler,
     )
     Log.info(os.path.join(base_url, 'static/'))
@@ -63,7 +64,7 @@ class Application(tornado.web.Application):
     # Change these to query string parameters, since
     # current format can lead to pattern matching issues.
     callbacks = [
-        (r"/", handlers.MainHandler, dict(baseUrl=base_url),
+        (r"/", handlers.MainHandler, dict(baseUrl=base_url)),
 
         url(r"/topologies", handlers.ListTopologiesHandler, dict(baseUrl=base_url),
             name='topologies'),
@@ -119,7 +120,7 @@ class Application(tornado.web.Application):
 
         ## Static files
         (r"/static/(.*)", tornado.web.StaticFileHandler,
-         dict(path=settings['static_path'])))
+         dict(path=settings['static_path']))
 
     ]
 
@@ -131,6 +132,7 @@ def define_options(address, port, tracker_url, base_url):
   :param address:
   :param port:
   :param tracker_url:
+  :param base_url:
   :return:
   '''
   define("address", default=address)

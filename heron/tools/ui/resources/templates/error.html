@@ -27,7 +27,7 @@
 
     <link href="{{ static_url('icomoon/style.css') }}" rel="stylesheet">
     <!--[if lte IE 7]>
-    <script src="/static/css/icomoon-font/lte-ie7.js"></script>
+    <script src="{{ static_url('icomoon/lte-ie7.js') }}"></script>
     <![endif]-->
 
     <!-- bootstrap css -->
@@ -48,7 +48,7 @@
             <h1>Oops!</h1>
             <h2>{{errormessage}}</h2>
             <div class="error-actions">
-              <a href="{{baseUrl}}/topologies" class="btn btn-danger">Back to Home</a>
+              <a href="/topologies" class="btn btn-danger">Back to Home</a>
             </div>
           </div>
         </div>
