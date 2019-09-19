@@ -25,7 +25,13 @@ set +e
 # Build everything
 DIR=`dirname $0`
 source ${DIR}/detect_os_type.sh
-bazel build --config=`platform` {heron,integration_test,tools/java,examples,heronpy,storm-compatibility,storm-compatibility-examples,eco,eco-storm-examples,eco-heron-examples}/...
+bazel build \
+  --incompatible_disable_deprecated_attr_params=false \
+  --incompatible_use_python_toolchains=false \
+  --incompatible_new_actions_api=false \
+  --incompatible_depset_is_not_iterable=false \
+  --incompatible_no_support_tools_in_action_inputs=false \
+  --config=`platform` {heron,integration_test,tools/java,examples,heronpy,storm-compatibility,storm-compatibility-examples,eco,eco-storm-examples,eco-heron-examples}/...
 result=$?
 if [ "${result}" -eq "0" ] ; then
   echo "Bazel build successful!!"

@@ -62,9 +62,18 @@ bazel version
 bazel clean
 
 echo "Creating packages"
-bazel build -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:tarpkgs
-bazel build -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:binpkgs
-bazel build -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/images:heron.tar
+#bazel build -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:tarpkgs
+#bazel build -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:binpkgs
+#bazel build -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/images:heron.tar
+bazel build \
+    --incompatible_use_python_toolchains=false \
+    --incompatible_depset_is_not_iterable=false \
+    --incompatible_no_support_tools_in_action_inputs=false \
+    --incompatible_new_actions_api=false \
+    --incompatible_disable_deprecated_attr_params=false \
+    -c opt --jobs 25 --config=darwin_nostyle scripts/packages:tarpkgs
+bazel build --incompatible_use_python_toolchains=false --incompatible_depset_is_not_iterable=false --incompatible_no_support_tools_in_action_inputs=false --incompatible_new_actions_api=false --incompatible_disable_deprecated_attr_params=false -c opt --jobs 25 --config=darwin_nostyle scripts/packages:binpkgs
+bazel build --incompatible_use_python_toolchains=false --incompatible_depset_is_not_iterable=false --incompatible_no_support_tools_in_action_inputs=false --incompatible_new_actions_api=false --incompatible_disable_deprecated_attr_params=false -c opt --jobs 25 --config=darwin_nostyle scripts/images:heron.tar
 
 echo "Moving packages to /$OUTPUT_DIRECTORY"
 for file in ./bazel-bin/scripts/packages/*.tar.gz; do
