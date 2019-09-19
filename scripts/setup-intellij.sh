@@ -17,7 +17,7 @@
 # under the License.
 
 # Generates an IntelliJ project in heron
-
+unset _JAVA_OPTIONS
 set -o errexit
 cd $(dirname "$0")
 echo "changing to `pwd`/.."

@@ -272,7 +272,6 @@ pkg_tar(
         "//heron/tools/tracker/src/python:heron-tracker",
         "//heron/tools/ui/src/python:heron-ui",
         "//heron/tools/apiserver/src/shell:heron-apiserver",
-        "//third_party/nomad:heron-nomad",
     ],
 )
 
