@@ -63,7 +63,7 @@ bazel clean
 
 CONFIG_PLATFORM=darwin_nostyle
 echo "Creating packages"
-incompatable=(
+incompatible=(
   --incompatible_use_python_toolchains=false
   --incompatible_depset_is_not_iterable=false
   --incompatible_no_support_tools_in_action_inputs=false
@@ -71,9 +71,9 @@ incompatable=(
   --incompatible_disable_deprecated_attr_params=false
   # --incompatible_disallow_unverified_http_downloads=false
 )
-bazel build ${incompatable[@]} -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:tarpkgs
-bazel build ${incompatable[@]} -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:binpkgs
-bazel build ${incompatable[@]} -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/images:heron.tar
+bazel build ${incompatible[@]} -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:tarpkgs
+bazel build ${incompatible[@]} -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:binpkgs
+bazel build ${incompatible[@]} -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/images:heron.tar
 
 echo "Moving packages to /$OUTPUT_DIRECTORY"
 for file in ./bazel-bin/scripts/packages/*.tar.gz; do
