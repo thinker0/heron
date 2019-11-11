@@ -32,6 +32,7 @@ bazel build \
   --incompatible_depset_is_not_iterable=false \
   --incompatible_no_support_tools_in_action_inputs=false \
   --incompatible_disallow_unverified_http_downloads=false \
+  --copt -DGRPC_BAZEL_BUILD \
   --config=`platform` {heron,integration_test,tools/java,examples,heronpy,storm-compatibility,storm-compatibility-examples,eco,eco-storm-examples,eco-heron-examples}/...
 result=$?
 if [ "${result}" -eq "0" ] ; then

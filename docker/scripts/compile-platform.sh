@@ -70,6 +70,7 @@ incompatible=(
   --incompatible_new_actions_api=false
   --incompatible_disable_deprecated_attr_params=false
   # --incompatible_disallow_unverified_http_downloads=false
+  --copt -DGRPC_BAZEL_BUILD
 )
 bazel build ${incompatible[@]} -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:tarpkgs
 bazel build ${incompatible[@]} -c opt --jobs 25 --config=$CONFIG_PLATFORM scripts/packages:binpkgs
