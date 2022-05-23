@@ -31,9 +31,15 @@ import "tmanager.proto";
 // they want to send a metric, they use the 
 // MetricPublisherPublishMessage to send out the actual message
 
+message Label {
+  required string name = 1;
+  required string value = 2;
+}
+
 message MetricDatum {
   required string name = 1;
   required string value = 2;
+  repeated Label labels = 3;
 }
 
 message ExceptionData {

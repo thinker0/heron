@@ -155,6 +155,7 @@ java_library(
     deps = [
         "@maven//:org_javassist_javassist",
         "@maven//:org_powermock_powermock_api_mockito",
+        "@maven//:org_powermock_powermock_api_mockito_common",
         "@maven//:org_powermock_powermock_api_support",
         "@maven//:org_powermock_powermock_core",
         "@maven//:org_powermock_powermock_module_junit4",
@@ -190,8 +191,8 @@ java_library(
 java_library(
     name = "mockito",
     srcs = ["Empty.java"],
-    exports = ["@maven//:org_mockito_mockito_all"],
-    deps = ["@maven//:org_mockito_mockito_all"],
+    exports = ["@maven//:org_mockito_mockito_core"],
+    deps = ["@maven//:org_mockito_mockito_core"],
 )
 
 java_library(

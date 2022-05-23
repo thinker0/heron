@@ -51,7 +51,7 @@ google_client_version = "1.22.0"
 
 jackson_version = "2.8.8"
 
-powermock_version = "1.6.2"
+powermock_version = "1.6.5"
 
 reef_version = "0.14.0"
 
@@ -136,8 +136,9 @@ maven_install(
         "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:%s" % jackson_version,
         "javax.xml.bind:jaxb-api:2.3.0",
         "javax.activation:activation:1.1.1",
-        "org.mockito:mockito-all:1.10.19",
+        "org.mockito:mockito-core:1.10.19",
         "org.powermock:powermock-api-mockito:" + powermock_version,
+        "org.powermock:powermock-api-mockito-common:" + powermock_version,
         "org.powermock:powermock-module-junit4:" + powermock_version,
         "com.puppycrawl.tools:checkstyle:6.17",
         "com.googlecode.json-simple:json-simple:1.1",
@@ -177,7 +178,7 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 git_repository(
     name = "com_github_johnynek_bazel_jar_jar",
-    commit = "171f268569384c57c19474b04aebe574d85fde0d", # Latest commit SHA as at 2019/02/13
+    commit = "171f268569384c57c19474b04aebe574d85fde0d",  # Latest commit SHA as at 2019/02/13
     remote = "https://github.com/johnynek/bazel_jar_jar.git",
     shallow_since = "1594234634 -1000",
 )
@@ -190,13 +191,14 @@ load(
 jar_jar_repositories()
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 http_archive(
     name = "platforms",
+    sha256 = "379113459b0feaf6bfbb584a91874c065078aa673222846ac765f86661c27407",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.5/platforms-0.0.5.tar.gz",
         "https://github.com/bazelbuild/platforms/releases/download/0.0.5/platforms-0.0.5.tar.gz",
     ],
-    sha256 = "379113459b0feaf6bfbb584a91874c065078aa673222846ac765f86661c27407",
 )
 
 http_archive(
@@ -462,11 +464,11 @@ container_pull(
 
 http_archive(
     name = "rules_pkg",
+    sha256 = "62eeb544ff1ef41d786e329e1536c1d541bb9bcad27ae984d57f18f314018e66",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.6.0/rules_pkg-0.6.0.tar.gz",
         "https://github.com/bazelbuild/rules_pkg/releases/download/0.6.0/rules_pkg-0.6.0.tar.gz",
     ],
-    sha256 = "62eeb544ff1ef41d786e329e1536c1d541bb9bcad27ae984d57f18f314018e66",
 )
 
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
