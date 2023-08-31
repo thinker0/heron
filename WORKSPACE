@@ -210,25 +210,25 @@ http_archive(
 
 http_archive(
     name = "platforms",
+    sha256 = "5308fc1d8865406a49427ba24a9ab53087f17f5266a7aabbfc28823f3916e1ca",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.6/platforms-0.0.6.tar.gz",
         "https://github.com/bazelbuild/platforms/releases/download/0.0.6/platforms-0.0.6.tar.gz",
     ],
-    sha256 = "5308fc1d8865406a49427ba24a9ab53087f17f5266a7aabbfc28823f3916e1ca",
 )
 
 http_archive(
     name = "rules_pkg",
+    sha256 = "eea0f59c28a9241156a47d7a8e32db9122f3d50b505fae0f33de6ce4d9b61834",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.8.0/rules_pkg-0.8.0.tar.gz",
         "https://github.com/bazelbuild/rules_pkg/releases/download/0.8.0/rules_pkg-0.8.0.tar.gz",
     ],
-    sha256 = "eea0f59c28a9241156a47d7a8e32db9122f3d50b505fae0f33de6ce4d9b61834",
 )
+
 load("@rules_pkg//pkg:deps.bzl", "rules_pkg_dependencies")
+
 rules_pkg_dependencies()
-
-
 
 # for pex repos
 PEX_PKG = "https://files.pythonhosted.org/packages/d4/73/4c76e06824baadba81b39125721c97fb22e201b35fcd17b32b5a5fa77c59/pex-2.1.62-py2.py3-none-any.whl"
@@ -354,7 +354,7 @@ http_archive(
     patches = ["//third_party/zookeeper:zookeeper_jute.patch"],
     sha256 = "b0c5684640bea2d8bd6610b47ff41be2aefd6c910ba48fcad5949bd2bf2fa1ac",
     strip_prefix = "apache-zookeeper-3.8.0",
-    urls = ["https://downloads.apache.org/zookeeper/zookeeper-3.8.0/apache-zookeeper-3.8.0.tar.gz"],
+    urls = ["https://archive.apache.org/dist/zookeeper/zookeeper-3.8.0/apache-zookeeper-3.8.0.tar.gz"],
 )
 
 http_archive(
