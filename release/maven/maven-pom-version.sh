@@ -36,12 +36,12 @@ cat ./maven/heron-no-kryo.template.pom | \
                         <dependency>\
                           <groupId>com.google.protobuf</groupId>\
                             <artifactId>protobuf-java</artifactId>\
-                            <version>3.16.1</version>\
+                            <version>3.19.6</version>\
                         </dependency>\
                         <dependency>\
                           <groupId>javax.xml.bind</groupId>\
                             <artifactId>jaxb-api</artifactId>\
-                            <version>2.3.0</version>\
+                            <version>2.3.1</version>\
                         </dependency>\
                         <dependency>\
                           <groupId>org.slf4j</groupId>\
@@ -64,7 +64,7 @@ cat ./maven/heron-no-kryo.template.pom | \
                         <dependency>\
                             <groupId>com.google.protobuf</groupId>\
                             <artifactId>protobuf-java</artifactId>\
-                            <version>3.19.1</version>\
+                            <version>3.19.6</version>\
                         </dependency>\
                          <dependency>\
                              <groupId>com.google.guava</groupId>\
