@@ -56,6 +56,7 @@ cc_library(
     copts = [
         "-Iheron",
         "-I$(GENDIR)/heron",
+        "-Iheron/proto",
         "-Iheron/api/src/cpp",
     ],
     linkstatic = 1,
