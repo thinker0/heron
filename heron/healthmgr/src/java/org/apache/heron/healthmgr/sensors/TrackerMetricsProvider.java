@@ -79,11 +79,6 @@ public class TrackerMetricsProvider implements MetricsProvider {
     for (String metric : metricNames) {
       for (String component : components) {
         String response = getMetricsFromTracker(metric, component, startTime, duration);
-        // handle errors
-        if (response == null || response.isEmpty()) {
-          LOG.info(String.format("Did not get any metrics from tracker for %s:%s ", component, metric));
-          continue;
-        }
         Collection<Measurement> measurements = parse(response, component, metric);
         LOG.fine(String.format("%d measurements received for %s/%s",
             measurements.size(), component, metric));
@@ -97,6 +92,12 @@ public class TrackerMetricsProvider implements MetricsProvider {
   private Collection<Measurement> parse(String response, String component, String metric) {
     Collection<Measurement> metricsData = new ArrayList();
 
+    // handle errors
+    if (response == null || response.isEmpty()) {
+      LOG.info(String.format("Empty response metrics from tracker for %s:%s ", component, metric));
+      return metricsData;
+    }
+
     DocumentContext result = JsonPath.parse(response);
     JSONArray jsonArray = result.read("$.." + metric);
     if (jsonArray.size() != 1) {
@@ -106,7 +107,7 @@ public class TrackerMetricsProvider implements MetricsProvider {
 
     Map<String, Object> metricsMap = (Map<String, Object>) jsonArray.get(0);
     if (metricsMap == null || metricsMap.isEmpty()) {
-      LOG.info(String.format("Did not get any metrics from tracker for %s:%s ", component, metric));
+      LOG.info(String.format("Empty metrics from tracker for %s:%s ", component, metric));
       return metricsData;
     }
 
