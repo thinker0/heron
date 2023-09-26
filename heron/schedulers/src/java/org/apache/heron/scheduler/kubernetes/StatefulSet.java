@@ -908,12 +908,7 @@ final class StatefulSet {
    */
   @VisibleForTesting
   protected static Map<String, String> getPersistentVolumeClaimLabels(String topologyName) {
-    return new HashMap<String, String>() {
-      {
-        put(KubernetesConstants.LABEL_TOPOLOGY, topologyName);
-        put(KubernetesConstants.LABEL_ON_DEMAND, "true");
-      }
-    };
+    return Map.of(KubernetesConstants.LABEL_TOPOLOGY, topologyName, KubernetesConstants.LABEL_ON_DEMAND, "true");
   }
 
   /**

@@ -247,41 +247,29 @@ public class VolumesTests {
     final Map<String, String> labels = KubernetesShim.getPersistentVolumeClaimLabels(topologyName);
 
     final Map<KubernetesConstants.VolumeConfigKeys, String> volOneConfig =
-        new HashMap<KubernetesConstants.VolumeConfigKeys, String>() {
-        {
-          put(KubernetesConstants.VolumeConfigKeys.claimName, claimNameOne);
-          put(KubernetesConstants.VolumeConfigKeys.storageClassName, storageClassName);
-          put(KubernetesConstants.VolumeConfigKeys.sizeLimit, sizeLimit);
-          put(KubernetesConstants.VolumeConfigKeys.accessModes, accessModesList);
-          put(KubernetesConstants.VolumeConfigKeys.volumeMode, volumeMode);
-          put(KubernetesConstants.VolumeConfigKeys.path, path);
-        }
-      };
+        Map.of(KubernetesConstants.VolumeConfigKeys.claimName, claimNameOne,
+               KubernetesConstants.VolumeConfigKeys.storageClassName, storageClassName,
+               KubernetesConstants.VolumeConfigKeys.sizeLimit, sizeLimit,
+               KubernetesConstants.VolumeConfigKeys.accessModes, accessModesList,
+               KubernetesConstants.VolumeConfigKeys.volumeMode, volumeMode,
+               KubernetesConstants.VolumeConfigKeys.path, path);
 
     final Map<KubernetesConstants.VolumeConfigKeys, String> volTwoConfig =
-        new HashMap<KubernetesConstants.VolumeConfigKeys, String>() {
-          {
-            put(KubernetesConstants.VolumeConfigKeys.claimName, claimNameTwo);
-            put(KubernetesConstants.VolumeConfigKeys.storageClassName, storageClassName);
-            put(KubernetesConstants.VolumeConfigKeys.sizeLimit, sizeLimit);
-            put(KubernetesConstants.VolumeConfigKeys.accessModes, accessModesList);
-            put(KubernetesConstants.VolumeConfigKeys.volumeMode, volumeMode);
-            put(KubernetesConstants.VolumeConfigKeys.path, path);
-            put(KubernetesConstants.VolumeConfigKeys.subPath, subPath);
-          }
-        };
+        Map.of(KubernetesConstants.VolumeConfigKeys.claimName, claimNameTwo,
+               KubernetesConstants.VolumeConfigKeys.storageClassName, storageClassName,
+               KubernetesConstants.VolumeConfigKeys.sizeLimit, sizeLimit,
+               KubernetesConstants.VolumeConfigKeys.accessModes, accessModesList,
+               KubernetesConstants.VolumeConfigKeys.volumeMode, volumeMode,
+               KubernetesConstants.VolumeConfigKeys.path, path,
+               KubernetesConstants.VolumeConfigKeys.subPath, subPath);
 
     final Map<KubernetesConstants.VolumeConfigKeys, String> volStaticConfig =
-        new HashMap<KubernetesConstants.VolumeConfigKeys, String>() {
-          {
-            put(KubernetesConstants.VolumeConfigKeys.claimName, claimNameStatic);
-            put(KubernetesConstants.VolumeConfigKeys.sizeLimit, sizeLimit);
-            put(KubernetesConstants.VolumeConfigKeys.accessModes, accessModes);
-            put(KubernetesConstants.VolumeConfigKeys.volumeMode, volumeMode);
-            put(KubernetesConstants.VolumeConfigKeys.path, path);
-            put(KubernetesConstants.VolumeConfigKeys.subPath, subPath);
-          }
-        };
+        Map.of(KubernetesConstants.VolumeConfigKeys.claimName, claimNameStatic,
+               KubernetesConstants.VolumeConfigKeys.sizeLimit, sizeLimit,
+               KubernetesConstants.VolumeConfigKeys.accessModes, accessModes,
+               KubernetesConstants.VolumeConfigKeys.volumeMode, volumeMode,
+               KubernetesConstants.VolumeConfigKeys.path, path,
+               KubernetesConstants.VolumeConfigKeys.subPath, subPath);
 
     final V1PersistentVolumeClaim claimOne = new V1PersistentVolumeClaimBuilder()
         .withNewMetadata()

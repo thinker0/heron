@@ -318,18 +318,15 @@ public class KubernetesContextTest {
 
     // With Storage Class Name.
     final Map<String, Map<VolumeConfigKeys, String>> expectedWithStorageClassName =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.claimName, passingValue);
-            put(VolumeConfigKeys.storageClassName, passingValue);
-            put(VolumeConfigKeys.sizeLimit, passingValue);
-            put(VolumeConfigKeys.accessModes, passingValue);
-            put(VolumeConfigKeys.volumeMode, passingValue);
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.claimName, passingValue,
+                                                VolumeConfigKeys.storageClassName, passingValue,
+                                                VolumeConfigKeys.sizeLimit, passingValue,
+                                                VolumeConfigKeys.accessModes, passingValue,
+                                                VolumeConfigKeys.volumeMode, passingValue,
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue)
+        );
     final Config configWithStorageClass = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "claimName"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "storageClassName"), passingValue)
@@ -345,17 +342,13 @@ public class KubernetesContextTest {
 
     // Without Storage Class Name.
     final Map<String, Map<VolumeConfigKeys, String>> expectedWithoutStorageClassName =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.claimName, passingValue);
-            put(VolumeConfigKeys.sizeLimit, passingValue);
-            put(VolumeConfigKeys.accessModes, passingValue);
-            put(VolumeConfigKeys.volumeMode, passingValue);
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.claimName, passingValue,
+                                                VolumeConfigKeys.sizeLimit, passingValue,
+                                                VolumeConfigKeys.accessModes, passingValue,
+                                                VolumeConfigKeys.volumeMode, passingValue,
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue));
     final Config configWithoutStorageClass = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "claimName"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "sizeLimit"), passingValue)
@@ -496,15 +489,11 @@ public class KubernetesContextTest {
 
     // With Medium.
     final Map<String, Map<VolumeConfigKeys, String>> expectedWithMedium =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.sizeLimit, passingValue);
-            put(VolumeConfigKeys.medium, "Memory");
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.sizeLimit, passingValue,
+                                                VolumeConfigKeys.medium, "Memory",
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue));
     final Config configWithMedium = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "sizeLimit"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "medium"), "Memory")
@@ -517,15 +506,11 @@ public class KubernetesContextTest {
 
     // With empty Medium.
     final Map<String, Map<VolumeConfigKeys, String>> expectedEmptyMedium =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.sizeLimit, passingValue);
-            put(VolumeConfigKeys.medium, "");
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.sizeLimit, passingValue,
+                                                VolumeConfigKeys.medium, "",
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue));
     final Config configEmptyMedium = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "sizeLimit"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "medium"), "")
@@ -538,14 +523,10 @@ public class KubernetesContextTest {
 
     // Without Medium.
     final Map<String, Map<VolumeConfigKeys, String>> expectedNoMedium =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.sizeLimit, passingValue);
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.sizeLimit, passingValue,
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue));
     final Config configNoMedium = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "sizeLimit"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "path"), passingValue)
@@ -658,15 +639,11 @@ public class KubernetesContextTest {
 
     // With type.
     final Map<String, Map<VolumeConfigKeys, String>> expectedWithType =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.type, "DirectoryOrCreate");
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.pathOnHost, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.type, "DirectoryOrCreate",
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.pathOnHost, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue));
     final Config configWithType = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "type"), "DirectoryOrCreate")
         .put(String.format(keyPattern, volumeNameValid, "pathOnHost"), passingValue)
@@ -679,14 +656,10 @@ public class KubernetesContextTest {
 
     // Without type.
     final Map<String, Map<VolumeConfigKeys, String>> expectedWithoutType =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.pathOnHost, passingValue);
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.pathOnHost, passingValue,
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue));
     final Config configWithoutType = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "pathOnHost"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "path"), passingValue)
@@ -819,16 +792,12 @@ public class KubernetesContextTest {
 
     // With readOnly.
     final Map<String, Map<VolumeConfigKeys, String>> expectedWithReadOnly =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.server, "nfs-server.default.local");
-            put(VolumeConfigKeys.readOnly, "true");
-            put(VolumeConfigKeys.pathOnNFS, passingValue);
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.server, "nfs-server.default.local",
+                                                VolumeConfigKeys.readOnly, "true",
+                                                VolumeConfigKeys.pathOnNFS, passingValue,
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue));
     final Config configWithReadOnly = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "server"), "nfs-server.default.local")
         .put(String.format(keyPattern, volumeNameValid, "readOnly"), "true")
@@ -842,15 +811,11 @@ public class KubernetesContextTest {
 
     // With readOnly.
     final Map<String, Map<VolumeConfigKeys, String>> expectedWithoutReadOnly =
-        ImmutableMap.of(volumeNameValid, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.server, "nfs-server.default.local");
-            put(VolumeConfigKeys.pathOnNFS, passingValue);
-            put(VolumeConfigKeys.path, passingValue);
-            put(VolumeConfigKeys.subPath, passingValue);
-            put(VolumeConfigKeys.readOnly, passingValue);
-          }
-        });
+        ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.server, "nfs-server.default.local",
+                                                VolumeConfigKeys.pathOnNFS, passingValue,
+                                                VolumeConfigKeys.path, passingValue,
+                                                VolumeConfigKeys.subPath, passingValue,
+                                                VolumeConfigKeys.readOnly, passingValue));
     final Config configWithoutReadOnly = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "server"), "nfs-server.default.local")
         .put(String.format(keyPattern, volumeNameValid, "pathOnNFS"), passingValue)
