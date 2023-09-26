@@ -491,37 +491,27 @@ public class StatefulSetTest {
     final String subPath = "/sub/path/to/mount/";
     final Map<String, Map<VolumeConfigKeys, String>> mapPVCOpts =
         ImmutableMap.of(
-            volumeNameOne, new HashMap<VolumeConfigKeys, String>() {
-              {
-                put(VolumeConfigKeys.claimName, claimNameOne);
-                put(VolumeConfigKeys.storageClassName, storageClassName);
-                put(VolumeConfigKeys.sizeLimit, sizeLimit);
-                put(VolumeConfigKeys.accessModes, accessModesList);
-                put(VolumeConfigKeys.volumeMode, volumeMode);
-                put(VolumeConfigKeys.path, path);
-              }
-            },
-            volumeNameTwo, new HashMap<VolumeConfigKeys, String>() {
-              {
-                put(VolumeConfigKeys.claimName, claimNameTwo);
-                put(VolumeConfigKeys.storageClassName, storageClassName);
-                put(VolumeConfigKeys.sizeLimit, sizeLimit);
-                put(VolumeConfigKeys.accessModes, accessModes);
-                put(VolumeConfigKeys.volumeMode, volumeMode);
-                put(VolumeConfigKeys.path, path);
-                put(VolumeConfigKeys.subPath, subPath);
-              }
-            },
-            volumeNameStatic, new HashMap<VolumeConfigKeys, String>() {
-              {
-                put(VolumeConfigKeys.claimName, claimNameStatic);
-                put(VolumeConfigKeys.sizeLimit, sizeLimit);
-                put(VolumeConfigKeys.accessModes, accessModes);
-                put(VolumeConfigKeys.volumeMode, volumeMode);
-                put(VolumeConfigKeys.path, path);
-                put(VolumeConfigKeys.subPath, subPath);
-              }
-            }
+            volumeNameOne, Map.of(VolumeConfigKeys.claimName, claimNameOne,
+                                  VolumeConfigKeys.storageClassName, storageClassName,
+                                  VolumeConfigKeys.sizeLimit, sizeLimit,
+                                  VolumeConfigKeys.accessModes, accessModesList,
+                                  VolumeConfigKeys.volumeMode, volumeMode,
+                                  VolumeConfigKeys.path, path)
+            ,
+            volumeNameTwo, Map.of(VolumeConfigKeys.claimName, claimNameTwo,
+                                  VolumeConfigKeys.storageClassName, storageClassName,
+                                  VolumeConfigKeys.sizeLimit, sizeLimit,
+                                  VolumeConfigKeys.accessModes, accessModes,
+                                  VolumeConfigKeys.volumeMode, volumeMode,
+                                  VolumeConfigKeys.path, path,
+                                  VolumeConfigKeys.subPath, subPath)
+            ,
+            volumeNameStatic, Map.of(VolumeConfigKeys.claimName, claimNameStatic,
+                                     VolumeConfigKeys.sizeLimit, sizeLimit,
+                                     VolumeConfigKeys.accessModes, accessModes,
+                                     VolumeConfigKeys.volumeMode, volumeMode,
+                                     VolumeConfigKeys.path, path,
+                                     VolumeConfigKeys.subPath, subPath)
         );
 
     final V1PersistentVolumeClaim claimOne = new V1PersistentVolumeClaimBuilder()
@@ -790,58 +780,26 @@ public class StatefulSetTest {
     testCases.add(new TestTuple<>("Empty input.", inputEmpty, new HashMap<>()));
 
     // Only memory.
-    Map<String, String> inputMemory = new HashMap<String, String>() {
-      {
-        put(KubernetesConstants.MEMORY, managerMemLimit);
-      }
-    };
-    Map<String, Quantity> expectedMemory = new HashMap<String, Quantity>() {
-      {
-        put(KubernetesConstants.MEMORY, memory);
-      }
-    };
+    Map<String, String> inputMemory = Map.of(KubernetesConstants.MEMORY, managerMemLimit);
+    Map<String, Quantity> expectedMemory = Map.of(KubernetesConstants.MEMORY, memory);
     testCases.add(new TestTuple<>("Only memory input.", inputMemory, expectedMemory));
 
     // Only CPU.
-    Map<String, String> inputCPU = new HashMap<String, String>() {
-      {
-        put(KubernetesConstants.CPU, managerCpuLimit);
-      }
-    };
-    Map<String, Quantity> expectedCPU = new HashMap<String, Quantity>() {
-      {
-        put(KubernetesConstants.CPU, cpu);
-      }
-    };
+    Map<String, String> inputCPU = Map.of(KubernetesConstants.CPU, managerCpuLimit);
+    Map<String, Quantity> expectedCPU = Map.of(KubernetesConstants.CPU, cpu);
     testCases.add(new TestTuple<>("Only CPU input.", inputCPU, expectedCPU));
 
     // CPU and memory.
-    Map<String, String> inputMemoryCPU = new HashMap<String, String>() {
-      {
-        put(KubernetesConstants.MEMORY, managerMemLimit);
-        put(KubernetesConstants.CPU, managerCpuLimit);
-      }
-    };
-    Map<String, Quantity> expectedMemoryCPU = new HashMap<String, Quantity>() {
-      {
-        put(KubernetesConstants.MEMORY, memory);
-        put(KubernetesConstants.CPU, cpu);
-      }
-    };
+    Map<String, String> inputMemoryCPU = Map.of(KubernetesConstants.MEMORY, managerMemLimit,
+                                                KubernetesConstants.CPU, managerCpuLimit);
+    Map<String, Quantity> expectedMemoryCPU = Map.of(KubernetesConstants.MEMORY, memory,
+                                                     KubernetesConstants.CPU, cpu);
     testCases.add(new TestTuple<>("Memory and CPU input.", inputMemoryCPU, expectedMemoryCPU));
 
     // Invalid.
-    Map<String, String> inputInvalid = new HashMap<String, String>() {
-      {
-        put("invalid input", "will not be ignored");
-        put(KubernetesConstants.CPU, managerCpuLimit);
-      }
-    };
-    Map<String, Quantity> expectedInvalid = new HashMap<String, Quantity>() {
-      {
-        put(KubernetesConstants.CPU, cpu);
-      }
-    };
+    Map<String, String> inputInvalid = Map.of("invalid input", "will not be ignored",
+                                              KubernetesConstants.CPU, managerCpuLimit);
+    Map<String, Quantity> expectedInvalid = Map.of(KubernetesConstants.CPU, cpu);
     testCases.add(new TestTuple<>("Invalid input.", inputInvalid, expectedInvalid));
 
     // Test loop.
@@ -865,14 +823,11 @@ public class StatefulSetTest {
 
     // Empty Dir.
     final Map<String, Map<VolumeConfigKeys, String>> config =
-        ImmutableMap.of(volumeName, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.sizeLimit, sizeLimit);
-            put(VolumeConfigKeys.medium, "Memory");
-            put(VolumeConfigKeys.path, path);
-            put(VolumeConfigKeys.subPath, subPath);
-          }
-        });
+        ImmutableMap.of(volumeName, Map.of(VolumeConfigKeys.sizeLimit, sizeLimit,
+                                           VolumeConfigKeys.medium, "Memory",
+                                           VolumeConfigKeys.path, path,
+                                           VolumeConfigKeys.subPath, subPath)
+        );
     final List<V1Volume> expectedVolumes = Collections.singletonList(
         new V1VolumeBuilder()
             .withName(volumeName)
@@ -910,14 +865,11 @@ public class StatefulSetTest {
 
     // Host Path.
     final Map<String, Map<VolumeConfigKeys, String>> config =
-        ImmutableMap.of(volumeName, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.type, type);
-            put(VolumeConfigKeys.pathOnHost, pathOnHost);
-            put(VolumeConfigKeys.path, path);
-            put(VolumeConfigKeys.subPath, subPath);
-          }
-        });
+        ImmutableMap.of(volumeName, Map.of(VolumeConfigKeys.type, type,
+                                           VolumeConfigKeys.pathOnHost, pathOnHost,
+                                           VolumeConfigKeys.path, path,
+                                           VolumeConfigKeys.subPath, subPath)
+        );
     final List<V1Volume> expectedVolumes = Collections.singletonList(
         new V1VolumeBuilder()
             .withName(volumeName)
@@ -956,15 +908,13 @@ public class StatefulSetTest {
 
     // NFS.
     final Map<String, Map<VolumeConfigKeys, String>> config =
-        ImmutableMap.of(volumeName, new HashMap<VolumeConfigKeys, String>() {
-          {
-            put(VolumeConfigKeys.server, server);
-            put(VolumeConfigKeys.readOnly, readOnly);
-            put(VolumeConfigKeys.pathOnNFS, pathOnNFS);
-            put(VolumeConfigKeys.path, path);
-            put(VolumeConfigKeys.subPath, subPath);
-          }
-        });
+        ImmutableMap.of(volumeName, Map.of(VolumeConfigKeys.server, server,
+                                           VolumeConfigKeys.readOnly, readOnly,
+                                           VolumeConfigKeys.pathOnNFS, pathOnNFS,
+                                           VolumeConfigKeys.path, path,
+                                           VolumeConfigKeys.subPath, subPath)
+
+        );
     final List<V1Volume> expectedVolumes = Collections.singletonList(
         new V1VolumeBuilder()
             .withName(volumeName)
