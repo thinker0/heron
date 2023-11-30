@@ -49,10 +49,7 @@ public class KubernetesUtilsTest {
         .valueFrom(new V1EnvVarSource()
             .fieldRef(new V1ObjectFieldSelector()
                 .fieldPath("env-variable-was-kept")));
-    final List<V1EnvVar> expectedEnvVars = Collections.unmodifiableList(
-        new LinkedList<V1EnvVar>(StatefulSet.getExecutorEnvVars()) {{
-          add(additionEnvVar);
-        }});
+    final List<V1EnvVar> expectedEnvVars = List.of(additionEnvVar);
     final List<V1EnvVar> inputEnvVars = Arrays.asList(
         new V1EnvVar()
             .name(KubernetesConstants.ENV_HOST)

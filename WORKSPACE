@@ -19,9 +19,9 @@ workspace(name = "org_apache_heron")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
-RULES_JVM_EXTERNAL_TAG = "4.2"
+RULES_JVM_EXTERNAL_TAG = "5.3"
 
-RULES_JVM_EXTERNAL_SHA = "cd1a77b7b02e8e008439ca76fd34f5b07aecb8c752961f9640dea15e9e5ba1ca"
+RULES_JVM_EXTERNAL_SHA = "6cc8444b20307113a62b676846c29ff018402fd4c7097fcd6d0a0fd5f2e86429"
 
 http_archive(
     name = "rules_jvm_external",
@@ -133,7 +133,7 @@ maven_install(
         "com.fasterxml.jackson.core:jackson-databind:%s" % jackson_version,
         "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:%s" % jackson_version,
         "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:%s" % jackson_version,
-        "javax.xml.bind:jaxb-api:2.3.0",
+        "javax.xml.bind:jaxb-api:2.3.1",
         "javax.activation:activation:1.1.1",
         "org.mockito:mockito-all:1.10.19",
         "org.powermock:powermock-api-mockito:" + powermock_version,
@@ -210,25 +210,25 @@ http_archive(
 
 http_archive(
     name = "platforms",
+    sha256 = "5308fc1d8865406a49427ba24a9ab53087f17f5266a7aabbfc28823f3916e1ca",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.6/platforms-0.0.6.tar.gz",
         "https://github.com/bazelbuild/platforms/releases/download/0.0.6/platforms-0.0.6.tar.gz",
     ],
-    sha256 = "5308fc1d8865406a49427ba24a9ab53087f17f5266a7aabbfc28823f3916e1ca",
 )
 
 http_archive(
     name = "rules_pkg",
+    sha256 = "eea0f59c28a9241156a47d7a8e32db9122f3d50b505fae0f33de6ce4d9b61834",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.8.0/rules_pkg-0.8.0.tar.gz",
         "https://github.com/bazelbuild/rules_pkg/releases/download/0.8.0/rules_pkg-0.8.0.tar.gz",
     ],
-    sha256 = "eea0f59c28a9241156a47d7a8e32db9122f3d50b505fae0f33de6ce4d9b61834",
 )
+
 load("@rules_pkg//pkg:deps.bzl", "rules_pkg_dependencies")
+
 rules_pkg_dependencies()
-
-
 
 # for pex repos
 PEX_PKG = "https://files.pythonhosted.org/packages/d4/73/4c76e06824baadba81b39125721c97fb22e201b35fcd17b32b5a5fa77c59/pex-2.1.62-py2.py3-none-any.whl"
@@ -354,15 +354,15 @@ http_archive(
     patches = ["//third_party/zookeeper:zookeeper_jute.patch"],
     sha256 = "b0c5684640bea2d8bd6610b47ff41be2aefd6c910ba48fcad5949bd2bf2fa1ac",
     strip_prefix = "apache-zookeeper-3.8.0",
-    urls = ["https://downloads.apache.org/zookeeper/zookeeper-3.8.0/apache-zookeeper-3.8.0.tar.gz"],
+    urls = ["https://archive.apache.org/dist/zookeeper/zookeeper-3.8.0/apache-zookeeper-3.8.0.tar.gz"],
 )
 
 http_archive(
     name = "com_github_gperftools_gperftools",
     build_file = "@//:third_party/gperftools/gperftools.BUILD",
-    sha256 = "982a37226eb42f40714e26b8076815d5ea677a422fb52ff8bfca3704d9c30a2d",
-    strip_prefix = "gperftools-2.4",
-    urls = ["https://github.com/gperftools/gperftools/releases/download/gperftools-2.4/gperftools-2.4.tar.gz"],
+    sha256 = "83e3bfdd28b8bcf53222c3798d4d395d52dadbbae59e8730c4a6d31a9c3732d8",
+    strip_prefix = "gperftools-2.10",
+    urls = ["https://github.com/gperftools/gperftools/releases/download/gperftools-2.10/gperftools-2.10.tar.gz"],
 )
 
 http_archive(
@@ -444,9 +444,9 @@ http_archive(
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "59536e6ae64359b716ba9c46c39183403b01eabfbd57578e84398b4829ca499a",
-    strip_prefix = "rules_docker-0.22.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.22.0/rules_docker-v0.22.0.tar.gz"],
+    sha256 = "27d53c1d646fc9537a70427ad7b034734d08a9c38924cc6357cc973fed300820",
+    strip_prefix = "rules_docker-0.24.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.24.0/rules_docker-v0.24.0.tar.gz"],
 )
 
 load(
@@ -485,6 +485,15 @@ http_archive(
     strip_prefix = "rules_scala-20220201",
     type = "zip",
     url = "https://github.com/bazelbuild/rules_scala/releases/download/20220201/rules_scala-20220201.zip",
+)
+
+skylib_version = "1.0.3"
+
+http_archive(
+    name = "bazel_skylib",
+    sha256 = "1c531376ac7e5a180e0237938a2536de0c54d93f5c278634818e0efc952dd56c",
+    type = "tar.gz",
+    url = "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib-{}.tar.gz".format(skylib_version, skylib_version),
 )
 
 load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")

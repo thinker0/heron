@@ -22,6 +22,7 @@ package org.apache.heron.scheduler;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -507,7 +508,7 @@ public class RuntimeManagerRunner {
     PackingPlanProtoDeserializer deserializer = new PackingPlanProtoDeserializer();
     PackingPlan currentPlan = deserializer.fromProto(currentProtoPlan);
     for (String component : changeRequests.keySet()) {
-      if (changeRequests.get(component) != currentPlan.getComponentCounts().get(component)) {
+      if (!Objects.equals(changeRequests.get(component), currentPlan.getComponentCounts().get(component))) {
         return true;
       }
     }

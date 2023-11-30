@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 
 import org.apache.heron.scheduler.utils.SchedulerUtils.ExecutorPort;
 
+import com.google.common.collect.Sets;
+
 public final class KubernetesConstants {
   private KubernetesConstants() {
   }
@@ -132,19 +134,6 @@ public final class KubernetesConstants {
     path,               // Added to container, nfsVolume, hostPath.
     subPath,            // Added to container.
   }
-
-  protected static final Set<String> VALID_VOLUME_HOSTPATH_TYPES = Collections.unmodifiableSet(
-      new HashSet<String>() {
-        {
-          add("");
-          add("DirectoryOrCreate");
-          add("Directory");
-          add("FileOrCreate");
-          add("File");
-          add("Socket");
-          add("CharDevice");
-          add("BlockDevice");
-        }
-      }
-  );
+  protected static final Set<String> VALID_VOLUME_HOSTPATH_TYPES =
+      Set.of("", "DirectoryOrCreate", "Directory", "FileOrCreate", "File", "Socket", "CharDevice", "BlockDevice");
 }

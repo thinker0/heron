@@ -20,14 +20,14 @@ package(default_visibility = ["//visibility:public"])
 
 config_setting(
     name = "linux_x86_64",
-    constraint_values = {
+    constraint_values = [
         "@platforms//arch:x86_64",
         "@platforms//os:linux",
-    },
+    ],
     values = {
         "linkopt": "-lm",
         "linkopt": "-lpthread",
         "linkopt": "-lrt",
-    }
+    },
     visibility = ["//visibility:public"],
 )

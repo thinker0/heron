@@ -6,7 +6,7 @@ pex_library(
         ["**/*.py"],
     ),
     reqs = [
-        "PyYAML==5.4.1",
+        "PyYAML==6.0.1",
         "requests==2.27.1",
         "netifaces==0.10.6",
     ],
