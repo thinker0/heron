@@ -78,7 +78,7 @@ maven_install(
         "org.slf4j:jcl-over-slf4j:%s" % slf4j_version,
         "ch.qos.logback:logback-classic:%s" % logback_verison,
         "antlr:antlr:2.7.7",
-        "org.apache.zookeeper:zookeeper:3.8.0",
+        "org.apache.zookeeper:zookeeper:3.8.3",
         "io.kubernetes:client-java:" + kubernetes_client_version,
         "io.kubernetes:client-java-api-fluent:" + kubernetes_client_version,
         "com.esotericsoftware:kryo:5.4.0",
