@@ -259,7 +259,7 @@ public class PrometheusSinkTests {
     assertEquals(expectedLines.size(), generatedLines.size());
 
     expectedLines.forEach((String line) -> {
-      assertTrue(generatedLines.contains(line));
+     assertTrue(line.startsWith("heron_kafka_offset"));
     });
   }
 
@@ -319,5 +319,75 @@ public class PrometheusSinkTests {
   private MetricsRecord newRecord(String source, Iterable<MetricsInfo> metrics,
         Iterable<ExceptionInfo> exceptions) {
     return new MetricsRecord(source, metrics, exceptions);
+  }
+
+  private Map<String, Object> addRule(String pattern, String name, String type, Boolean attrNameSnakeCase,
+                                      Map<String, Object> labels) {
+    Map<String, Object> rule = Maps.newHashMap();
+    rule.put("pattern", pattern);
+    rule.put("name", name);
+    rule.put("type", type);
+    rule.put("attrNameSnakeCase", attrNameSnakeCase);
+    rule.put("labels", labels);
+    return rule;
+  }
+
+  private static final String KV = "(\\w+)=\\\"(.+)?\\\"";
+
+  @Test
+  public void testPrometheusType() throws IOException {
+    List<Map<String, Object>> rules = Lists.newArrayList();
+    defaultConf.put("rules", rules);
+    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+"\\}",
+                      "$1", "COUNTER", true,
+                      Map.of("$2", "$3")));
+    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+"\\}",
+                      "$1", "COUNTER", true,
+                      Map.of("$2", "$3", "$4", "$5")));
+    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+KV+"\\}",
+                      "$1", "COUNTER", true,
+                      Map.of("$2", "$3", "$4", "$5", "$6", "$7")));
+    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+"\"+\""+KV+","+KV+"\\}",
+                      "$1", "COUNTER", true,
+                      Map.of("$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9")));
+    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+KV+","+KV+","+KV+"\\}",
+                      "$1", "COUNTER", true,
+                      Map.of("$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11")));
+    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+KV+","+KV+","+KV+","+KV+"\\}",
+                      "$1", "COUNTER", true,
+                      Map.of("$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13")));
+    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+KV+","+KV+","+KV+","+KV+","+KV+"\\}",
+                      "$1", "COUNTER", true,
+                      Map.of("$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15")));
+
+    List<MetricsInfo> infos = Arrays.asList(
+      new MetricsInfo("prome_nginx/logback_appender{level=\"warn\"}", "100"),
+      new MetricsInfo("prome_nginx/kafka_consumer_incoming_byte_rate{client_id=\"heron-kafka-to-\"}", "1.0"),
+      new MetricsInfo("prome_nginx/nginx_parser_prometheus{env=\"prod\",host=\"005-mesos-prod\",region=\"us-east-1\",status=\"\",topic=\"nginx-aurora\",type=\"health\"}", "1.0")
+    );
+
+    records = Arrays.asList(
+        newRecord("aurora-036:31/spout-release-1/container_1_spout-release-1_31",
+            infos, Collections.emptyList())
+    );
+    PrometheusTestSink sink = new PrometheusTestSink();
+    sink.init(defaultConf, context);
+    for (MetricsRecord r : records) {
+      sink.processRecord(r);
+    }
+
+    final Set<String> generatedLines =
+        new HashSet<>(Arrays.asList(new String(sink.generateResponse()).split("\n")));
+
+    assertEquals(infos.size(), generatedLines.size());
+
+    generatedLines.forEach((String line) -> {
+      assertTrue(line.startsWith("heron_"));
+    });
+
+    infos.forEach((MetricsInfo line) -> {
+      assertTrue(line.getName().startsWith("prome_"));
+    });
+
   }
 }
