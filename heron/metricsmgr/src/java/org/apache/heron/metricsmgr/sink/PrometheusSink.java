@@ -172,7 +172,7 @@ public class PrometheusSink extends AbstractWebSink {
 
     metrics.forEach((String source, Map<String, Double> sourceMetrics) -> {
       // Map the labels.
-      final Map<String, String> labelKV = new TreeMap<String, String>();
+      final Map<String, String> baseLabels = new TreeMap<String, String>();
 
       String[] sources = source.split("/");
       String topology = sources[0];
@@ -188,20 +188,20 @@ public class PrometheusSink extends AbstractWebSink {
       final String clusterRoleEnv = hasClusterRoleEnvironment(c, r, e)
           ? String.format("%s/%s/%s", c, r, e) : null;
 
-      labelKV.put("topology", topology);
-      labelKV.put("component", component);
-      labelKV.put("instance_id", instance);
+      baseLabels.put("topology", topology);
+      baseLabels.put("component", component);
+      baseLabels.put("instance_id", instance);
 
       if (clusterRoleEnv != null) {
-        labelKV.put("cluster_role_env", clusterRoleEnv);
+        baseLabels.put("cluster_role_env", clusterRoleEnv);
       }
 
       if (componentType != null) {
-        labelKV.put("component_type", componentType);
+        baseLabels.put("component_type", componentType);
       }
 
       sourceMetrics.forEach((String metric, Double value) -> {
-
+        final Map<String, String> labelKV = new TreeMap<String, String>(baseLabels);
         // some stream manager metrics in heron contain a instance id as part of the metric name
         // this should be a label when exported to prometheus.
         // Example: __connection_buffer_by_instanceid/container_1_word_5/packets or
@@ -224,13 +224,13 @@ public class PrometheusSink extends AbstractWebSink {
           }
         } else {
           final AtomicReference<String> name = new AtomicReference<>(sanitizeMetricName(metric));
-          rules.forEach(rule -> {
+          for (Rule rule : rules) {
             String ruleName = name.get();
             Matcher matcher = null;
             if (rule.pattern != null) {
               matcher = rule.pattern.matcher(metric);
               if (!matcher.matches()) {
-                return;
+                continue;
               }
             }
 
@@ -241,7 +241,7 @@ public class PrometheusSink extends AbstractWebSink {
               // Matcher is set below here due to validation in the constructor.
               ruleName = sanitizeMetricName(matcher.replaceAll(rule.name));
               if (ruleName.isEmpty()) {
-                return;
+                continue;
               }
             }
             if (rule.attrNameSnakeCase) {
@@ -261,7 +261,8 @@ public class PrometheusSink extends AbstractWebSink {
                 }
               }
             }
-          });
+            break;
+          }
           metricName = name.get();
         }
 
