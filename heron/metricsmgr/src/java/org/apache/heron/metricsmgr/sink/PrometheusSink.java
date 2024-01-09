@@ -201,27 +201,36 @@ public class PrometheusSink extends AbstractWebSink {
       }
 
       sourceMetrics.forEach((String metric, Double value) -> {
-        final Map<String, String> labelKV = new TreeMap<String, String>(baseLabels);
+        final Map<String, String> labelKV = new TreeMap<>(baseLabels);
         // some stream manager metrics in heron contain a instance id as part of the metric name
         // this should be a label when exported to prometheus.
         // Example: __connection_buffer_by_instanceid/container_1_word_5/packets or
         // __time_spent_back_pressure_by_compid/container_1_exclaim1_1
         // TODO convert to small classes for less string manipulation
-        final String metricName;
+        AtomicReference<String> metricName = new AtomicReference<>();
         if (componentIsStreamManger) {
           final boolean metricHasInstanceId = metric.contains("_by_");
           final String[] metricParts = metric.split("/");
           if (metricHasInstanceId && metricParts.length == 3) {
-            metricName = splitTargetInstance(metricParts[0], metricParts[2], labelKV);
+            metricName.set(splitTargetInstance(metricParts[0], metricParts[2], labelKV));
             labelKV.put("metric_instance_id", metricParts[1]);
           } else if (metricHasInstanceId && metricParts.length == 2) {
-            metricName = splitTargetInstance(metricParts[0], null, labelKV);
+            metricName.set(splitTargetInstance(metricParts[0], null, labelKV));
             labelKV.put("metric_instance_id", metricParts[1]);
           } else if (metricParts.length == 2) {
-            metricName = splitTargetInstance(metricParts[0], metricParts[1], labelKV);
+            metricName.set(splitTargetInstance(metricParts[0], metricParts[1], labelKV));
           } else {
-            metricName = splitTargetInstance(metric, null, labelKV);
+            metricName.set(splitTargetInstance(metric, null, labelKV));
           }
+        } if (isPrometheusMetrics(metric)) {
+          PROME_PATTERN.matcher(metric).results()
+              .forEach(matchResult -> {
+                metricName.set(matchResult.group(2));
+                String labels = matchResult.group(3);
+                PROME_LABELS.matcher(labels).results()
+                            .forEach(labelResult -> labelKV.put(labelResult.group(1),
+                                                                labelResult.group(2)));
+              });
         } else {
           final AtomicReference<String> name = new AtomicReference<>(sanitizeMetricName(metric));
           for (Rule rule : rules) {
@@ -263,14 +272,14 @@ public class PrometheusSink extends AbstractWebSink {
             }
             break;
           }
-          metricName = name.get();
+          metricName.set(name.get());
         }
 
         // TODO Type, Help
         String exportedMetricName = format("%s_%s", HERON_PREFIX,
-            metricName
-                .replace("__", "")
-                .toLowerCase());
+                                           metricName.get()
+                                                     .replace("__", "")
+                                                     .toLowerCase());
         sb.append(sanitizeMetricName(exportedMetricName))
             .append("{");
         final AtomicBoolean isFirst = new AtomicBoolean(true);
@@ -292,6 +301,12 @@ public class PrometheusSink extends AbstractWebSink {
     return sb.toString().getBytes();
   }
 
+  private boolean isPrometheusMetrics(String metric) {
+      return metric.endsWith("}") && metric.contains("{");
+  }
+
+  private static final Pattern PROME_PATTERN = Pattern.compile("(\\w+/)?([a-zA-Z_:][a-zA-Z0-9_:]*)\\{(?<labels>.*)}$");
+  private static final Pattern PROME_LABELS = Pattern.compile("(?<key>[a-zA-Z_][a-zA-Z0-9_]*)=\"(?<value>.+)?\",?");
   private static final Pattern SPLIT_TARGET = Pattern.compile("__(?<name>\\w+)"
       + "_(?<target>(?<instance>\\w+)-\\d+)");
   private static final Pattern DIGIT = Pattern.compile("[0-9]+");

@@ -42,3 +42,11 @@ Parameter | Description | Default
 `include-topology-name` | Whether the name of the Heron topology will be included in names for metrics | `true`
 `metrics-cache-max-size` | The maximum number of metrics cached and published | 1000000
 `metrics-cache-ttl-sec` | The time to live (TTL) for metrics, i.e. the time, in seconds after which a metric that was collected will stop being published | 600 (10 minutes)
+
+### Support prometheus native format
+
+Heron supports prometheus native format. You can use the following format to query metrics from Heron.
+```java
+  Pattern PROME_PATTERN = Pattern.compile("(\\w+/)?([a-zA-Z_:][a-zA-Z0-9_:]*)\\{(?<labels>.*)}$");
+  Pattern PROME_LABELS = Pattern.compile("(?<key>[a-zA-Z_][a-zA-Z0-9_]*)=\"(?<value>.+)?\",?");
+```
