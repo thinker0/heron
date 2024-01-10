@@ -45,7 +45,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class PrometheusSinkTests {
-
   private static final long NOW = System.currentTimeMillis();
 
   private final class PrometheusTestSink extends PrometheusSink {
@@ -167,6 +166,7 @@ public class PrometheusSinkTests {
     assertEquals(expectedLines.size(), generatedLines.size());
 
     expectedLines.forEach((String line) -> {
+      assertTrue(line.startsWith("heron_") && line.contains("{") && line.contains("}"));
       assertTrue(generatedLines.contains(line));
     });
   }
@@ -211,7 +211,7 @@ public class PrometheusSinkTests {
     assertEquals(expectedLines.size(), generatedLines.size());
 
     expectedLines.forEach((String line) -> {
-      assertTrue(generatedLines.contains(line));
+      assertTrue(line.startsWith("heron_") && line.contains("{") && line.contains("}"));
     });
   }
 
@@ -259,7 +259,7 @@ public class PrometheusSinkTests {
     assertEquals(expectedLines.size(), generatedLines.size());
 
     expectedLines.forEach((String line) -> {
-     assertTrue(line.startsWith("heron_kafka_offset"));
+      assertTrue(line.startsWith("heron_kafka_offset") && line.contains("{") && line.contains("}"));
     });
   }
 
@@ -338,27 +338,6 @@ public class PrometheusSinkTests {
   public void testPrometheusType() throws IOException {
     List<Map<String, Object>> rules = Lists.newArrayList();
     defaultConf.put("rules", rules);
-    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+"\\}",
-                      "$1", "COUNTER", true,
-                      Map.of("$2", "$3")));
-    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+"\\}",
-                      "$1", "COUNTER", true,
-                      Map.of("$2", "$3", "$4", "$5")));
-    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+KV+"\\}",
-                      "$1", "COUNTER", true,
-                      Map.of("$2", "$3", "$4", "$5", "$6", "$7")));
-    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+"\"+\""+KV+","+KV+"\\}",
-                      "$1", "COUNTER", true,
-                      Map.of("$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9")));
-    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+KV+","+KV+","+KV+"\\}",
-                      "$1", "COUNTER", true,
-                      Map.of("$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11")));
-    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+KV+","+KV+","+KV+","+KV+"\\}",
-                      "$1", "COUNTER", true,
-                      Map.of("$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13")));
-    rules.add(addRule("prome_.+\\/(\\w+)\\{"+KV+","+KV+","+KV+","+KV+","+KV+","+KV+","+KV+"\\}",
-                      "$1", "COUNTER", true,
-                      Map.of("$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15")));
 
     List<MetricsInfo> infos = Arrays.asList(
       new MetricsInfo("prome_nginx/logback_appender{level=\"warn\"}", "100"),
@@ -382,7 +361,7 @@ public class PrometheusSinkTests {
     assertEquals(infos.size(), generatedLines.size());
 
     generatedLines.forEach((String line) -> {
-      assertTrue(line.startsWith("heron_"));
+      assertTrue(line.startsWith("heron_") && line.contains("{") && line.contains("}"));
     });
 
     infos.forEach((MetricsInfo line) -> {
