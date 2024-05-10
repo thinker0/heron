@@ -241,7 +241,7 @@ SETUPTOOLS_PKG = "https://files.pythonhosted.org/packages/f7/29/13965af254e3373b
 
 WHEEL_PKG = "https://files.pythonhosted.org/packages/27/d6/003e593296a85fd6ed616ed962795b2f87709c3eee2bca4f6d0fe55c6d00/wheel-0.37.1-py2.py3-none-any.whl"
 
-CHARSET_PKG = "https://files.pythonhosted.org/packages/84/3e/1037abe6498e65d645ce7a22d3402605d49a3b2c7f20c3abb027760da4f0/charset_normalizer-2.0.10-py3-none-any.whl"
+CHARSET_PKG = "https://files.pythonhosted.org/packages/68/2b/02e9d6a98ddb73fa238d559a9edcc30b247b8dc4ee848b6184c936e99dc0/charset_normalizer-3.0.1-py3-none-any.whl"
 
 IDNA_PKG = "https://files.pythonhosted.org/packages/04/a2/d918dcd22354d8958fe113e1a3630137e0fc8b44859ade3063982eacd2a4/idna-3.3-py3-none-any.whl"
 
@@ -272,8 +272,8 @@ http_file(
 
 http_file(
     name = "charset_pkg",
-    downloaded_file_path = "charset_normalizer-2.0.10-py3-none-any.whl",
-    sha256 = "cb957888737fc0bbcd78e3df769addb41fd1ff8cf950dc9e7ad7793f1bf44455",
+    downloaded_file_path = "charset_normalizer-3.0.1-py3-none-any.whl",
+    sha256 = "7e189e2e1d3ed2f4aebabd2d5b0f931e883676e51c7624826e0a4e5fe8a0bf24",
     urls = [CHARSET_PKG],
 )
 
