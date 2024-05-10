@@ -237,7 +237,7 @@ PYTEST_PKG = "https://files.pythonhosted.org/packages/40/76/86f886e750b81a4357b6
 
 REQUESTS_PKG = "https://files.pythonhosted.org/packages/70/8e/0e2d847013cb52cd35b38c009bb167a1a26b2ce6cd6965bf26b47bc0bf44/requests-2.31.0-py3-none-any.whl"
 
-SETUPTOOLS_PKG = "https://files.pythonhosted.org/packages/3d/f2/1489d3b6c72d68bf79cd0fba6b6c7497df4ebf7d40970e2d7eceb8d0ea9c/setuptools-51.0.0-py3-none-any.whl"
+SETUPTOOLS_PKG = "https://files.pythonhosted.org/packages/f7/29/13965af254e3373bceae8fb9a0e6ea0d0e571171b80d6646932131d6439b/setuptools-69.5.1-py3-none-any.whl"
 
 WHEEL_PKG = "https://files.pythonhosted.org/packages/d4/cf/732e05dce1e37b63d54d1836160b6e24fb36eeff2313e93315ad047c7d90/wheel-0.36.1.tar.gz"
 
@@ -307,8 +307,8 @@ http_file(
 
 http_file(
     name = "setuptools_pkg",
-    downloaded_file_path = "setuptools-51.0.0-py3-none-any.whl",
-    sha256 = "8c177936215945c9a37ef809ada0fab365191952f7a123618432bbfac353c529",
+    downloaded_file_path = "setuptools-69.5.1-py3-none-any.whl",
+    sha256 = "c636ac361bc47580504644275c9ad802c50415c7522212252c033bd15f301f32",
     urls = [SETUPTOOLS_PKG],
 )
 
