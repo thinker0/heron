@@ -245,7 +245,7 @@ CHARSET_PKG = "https://files.pythonhosted.org/packages/68/2b/02e9d6a98ddb73fa238
 
 IDNA_PKG = "https://files.pythonhosted.org/packages/04/a2/d918dcd22354d8958fe113e1a3630137e0fc8b44859ade3063982eacd2a4/idna-3.3-py3-none-any.whl"
 
-CERTIFI_PKG = "https://files.pythonhosted.org/packages/37/45/946c02767aabb873146011e665728b680884cd8fe70dde973c640e45b775/certifi-2021.10.8-py2.py3-none-any.whl"
+CERTIFI_PKG = "https://files.pythonhosted.org/packages/ba/06/a07f096c664aeb9f01624f858c3add0a4e913d6c96257acb4fce61e7de14/certifi-2024.2.2-py3-none-any.whl"
 
 URLLIB3_PKG = "https://files.pythonhosted.org/packages/a2/73/a68704750a7679d0b6d3ad7aa8d4da8e14e151ae82e6fee774e6e0d05ec8/urllib3-2.2.1-py3-none-any.whl"
 
@@ -258,8 +258,8 @@ http_file(
 
 http_file(
     name = "certifi_pkg",
-    downloaded_file_path = "certifi-2021.10.8-py2.py3-none-any.whl",
-    sha256 = "d62a0163eb4c2344ac042ab2bdf75399a71a2d8c7d47eac2e2ee91b9d6339569",
+    downloaded_file_path = "certifi-2024.2.2-py3-none-any.whl",
+    sha256 = "dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1",
     urls = [CERTIFI_PKG],
 )
 
