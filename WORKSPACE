@@ -235,7 +235,7 @@ PEX_PKG = "https://files.pythonhosted.org/packages/f5/75/df33045e065a49b6b398073
 
 PYTEST_PKG = "https://files.pythonhosted.org/packages/40/76/86f886e750b81a4357b6ed606b2bcf0ce6d6c27ad3c09ebf63ed674fc86e/pytest-6.2.5-py3-none-any.whl"
 
-REQUESTS_PKG = "https://files.pythonhosted.org/packages/2d/61/08076519c80041bc0ffa1a8af0cbd3bf3e2b62af10435d269a9d0f40564d/requests-2.27.1-py2.py3-none-any.whl"
+REQUESTS_PKG = "https://files.pythonhosted.org/packages/70/8e/0e2d847013cb52cd35b38c009bb167a1a26b2ce6cd6965bf26b47bc0bf44/requests-2.31.0-py3-none-any.whl"
 
 SETUPTOOLS_PKG = "https://files.pythonhosted.org/packages/3d/f2/1489d3b6c72d68bf79cd0fba6b6c7497df4ebf7d40970e2d7eceb8d0ea9c/setuptools-51.0.0-py3-none-any.whl"
 
@@ -300,8 +300,8 @@ http_file(
 
 http_file(
     name = "requests_pkg",
-    downloaded_file_path = "requests-2.27.1-py2.py3-none-any.whl",
-    sha256 = "f22fa1e554c9ddfd16e6e41ac79759e17be9e492b3587efa038054674760e72d",
+    downloaded_file_path = "requests-2.31.0-py3-none-any.whl",
+    sha256 = "58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f",
     urls = [REQUESTS_PKG],
 )
 
