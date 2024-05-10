@@ -239,7 +239,7 @@ REQUESTS_PKG = "https://files.pythonhosted.org/packages/70/8e/0e2d847013cb52cd35
 
 SETUPTOOLS_PKG = "https://files.pythonhosted.org/packages/f7/29/13965af254e3373bceae8fb9a0e6ea0d0e571171b80d6646932131d6439b/setuptools-69.5.1-py3-none-any.whl"
 
-WHEEL_PKG = "https://files.pythonhosted.org/packages/d4/cf/732e05dce1e37b63d54d1836160b6e24fb36eeff2313e93315ad047c7d90/wheel-0.36.1.tar.gz"
+WHEEL_PKG = "https://files.pythonhosted.org/packages/27/d6/003e593296a85fd6ed616ed962795b2f87709c3eee2bca4f6d0fe55c6d00/wheel-0.37.1-py2.py3-none-any.whl"
 
 CHARSET_PKG = "https://files.pythonhosted.org/packages/84/3e/1037abe6498e65d645ce7a22d3402605d49a3b2c7f20c3abb027760da4f0/charset_normalizer-2.0.10-py3-none-any.whl"
 
@@ -286,8 +286,8 @@ http_file(
 
 http_file(
     name = "wheel_pkg",
-    downloaded_file_path = "wheel-0.36.1.tar.gz",
-    sha256 = "aaef9b8c36db72f8bf7f1e54f85f875c4d466819940863ca0b3f3f77f0a1646f",
+    downloaded_file_path = "wheel-0.37.1-py3-none-any.whl",
+    sha256 = "4bdcd7d840138086126cd09254dc6195fb4fc6f01c050a1d7236f2630db1d22a",
     urls = [WHEEL_PKG],
 )
 
