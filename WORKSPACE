@@ -355,9 +355,9 @@ http_archive(
     build_file = "@//:third_party/zookeeper/BUILD",
     patch_args = ["-p1"],
     patches = ["//third_party/zookeeper:zookeeper_jute.patch"],
-    sha256 = "b0c5684640bea2d8bd6610b47ff41be2aefd6c910ba48fcad5949bd2bf2fa1ac",
-    strip_prefix = "apache-zookeeper-3.8.0",
-    urls = ["https://archive.apache.org/dist/zookeeper/zookeeper-3.8.0/apache-zookeeper-3.8.0.tar.gz"],
+    sha256 = "b15bf5b4e4977d04447be0c53743c57df985b6f6786c067b12821a8d79922294",
+    strip_prefix = "apache-zookeeper-3.8.4",
+    urls = ["https://archive.apache.org/dist/zookeeper/zookeeper-3.8.4/apache-zookeeper-3.8.4.tar.gz"],
 )
 
 http_archive(
