@@ -231,7 +231,7 @@ load("@rules_pkg//pkg:deps.bzl", "rules_pkg_dependencies")
 rules_pkg_dependencies()
 
 # for pex repos
-PEX_PKG = "https://files.pythonhosted.org/packages/d4/73/4c76e06824baadba81b39125721c97fb22e201b35fcd17b32b5a5fa77c59/pex-2.1.62-py2.py3-none-any.whl"
+PEX_PKG = "https://files.pythonhosted.org/packages/f5/75/df33045e065a49b6b39807343da8e3fa24d3e9665ce3650b9dfe59c3e97b/pex-2.1.164-py2.py3-none-any.whl"
 
 PYTEST_PKG = "https://files.pythonhosted.org/packages/40/76/86f886e750b81a4357b6ed606b2bcf0ce6d6c27ad3c09ebf63ed674fc86e/pytest-6.2.5-py3-none-any.whl"
 
@@ -293,8 +293,8 @@ http_file(
 
 http_file(
     name = "pex_pkg",
-    downloaded_file_path = "pex-2.1.62-py2.py3-none-any.whl",
-    sha256 = "7667c6c6d7a9b07c3ff3c3125c1928bd5279dfc077dd5cf4cc0440f40427c484",
+    downloaded_file_path = "pex-2.1.164-py2.py3-none-any.whl",
+    sha256 = "37d7d4cad605784dbf3494608fb5928c2c5e385d60dcc00bc816c4c70d6f0fae",
     urls = [PEX_PKG],
 )
 

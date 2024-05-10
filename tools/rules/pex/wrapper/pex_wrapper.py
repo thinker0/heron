@@ -98,7 +98,8 @@ def main(args=None):
             pex_builder = pexbin.build_pex(
                 requirement_configuration=requirement_configuration,
                 resolver_configuration=resolver_configuration,
-                target_configuration=target_configuration,
+                interpreter_constraints=target_configuration.interpreter_constraints,
+                targets=target_configuration.resolve_targets(),
                 options=poptions)
 
         # Add source files from the manifest
