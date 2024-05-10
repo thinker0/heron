@@ -480,28 +480,29 @@ container_pull(
 # scala integration
 http_archive(
     name = "io_bazel_rules_scala",
-    sha256 = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2",
-    strip_prefix = "rules_scala-20220201",
-    type = "zip",
-    url = "https://github.com/bazelbuild/rules_scala/releases/download/20220201/rules_scala-20220201.zip",
+    sha256 = "3b00fa0b243b04565abb17d3839a5f4fa6cc2cac571f6db9f83c1982ba1e19e5",
+    strip_prefix = "rules_scala-6.5.0",
+    url = "https://github.com/bazelbuild/rules_scala/releases/download/v6.5.0/rules_scala-v6.5.0.tar.gz",
 )
-
-skylib_version = "1.0.3"
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "1c531376ac7e5a180e0237938a2536de0c54d93f5c278634818e0efc952dd56c",
-    type = "tar.gz",
-    url = "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib-{}.tar.gz".format(skylib_version, skylib_version),
+    sha256 = "9f38886a40548c6e96c106b752f242130ee11aaa068a56ba7e56f4511f33e4f2",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.6.1/bazel-skylib-1.6.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.6.1/bazel-skylib-1.6.1.tar.gz",
+    ],
 )
 
 load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
 
-scala_config(scala_version = "2.12.15")
+scala_config()
 
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
+load("@io_bazel_rules_scala//scala:scala.bzl", "rules_scala_setup", "rules_scala_toolchain_deps_repositories")
 
-scala_repositories()
+rules_scala_setup()
+
+rules_scala_toolchain_deps_repositories(fetch_sources = True)
 
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 
@@ -519,3 +520,4 @@ load("@io_bazel_rules_scala//testing:scalatest.bzl", "scalatest_repositories", "
 scalatest_repositories()
 
 scalatest_toolchain()
+# end scala integration
