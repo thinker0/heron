@@ -247,12 +247,12 @@ IDNA_PKG = "https://files.pythonhosted.org/packages/04/a2/d918dcd22354d8958fe113
 
 CERTIFI_PKG = "https://files.pythonhosted.org/packages/37/45/946c02767aabb873146011e665728b680884cd8fe70dde973c640e45b775/certifi-2021.10.8-py2.py3-none-any.whl"
 
-URLLIB3_PKG = "https://files.pythonhosted.org/packages/4e/b8/f5a25b22e803f0578e668daa33ba3701bb37858ec80e08a150bd7d2cf1b1/urllib3-1.26.8-py2.py3-none-any.whl"
+URLLIB3_PKG = "https://files.pythonhosted.org/packages/a2/73/a68704750a7679d0b6d3ad7aa8d4da8e14e151ae82e6fee774e6e0d05ec8/urllib3-2.2.1-py3-none-any.whl"
 
 http_file(
     name = "urllib3_pkg",
-    downloaded_file_path = "urllib3-1.26.8-py2.py3-none-any.whl",
-    sha256 = "000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed",
+    downloaded_file_path = "urllib3-2.2.1-py3-none-any.whl",
+    sha256 = "450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d",
     urls = [URLLIB3_PKG],
 )
 
