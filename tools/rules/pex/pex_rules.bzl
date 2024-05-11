@@ -198,9 +198,11 @@ def _pex_binary_impl(ctx):
         "--python-shebang", "#!/usr/bin/env python3",
         "--no-compile",
         "--include-tools",
-        "--layout", "zipapp",
-        "--resolver-version", "pip-2020-resolver",
-        "--manifest-file", manifest_file.path,
+        "--layout zipapp",
+        "--resolver-version pip-2020-resolver",
+        "--pip-version latest",
+        "--manifest-file",
+        manifest_file.path,
     ]
     #EXTRA_PEX_ARGS#
 
