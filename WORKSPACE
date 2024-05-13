@@ -172,17 +172,15 @@ load("@maven//:defs.bzl", "pinned_maven_install")
 
 pinned_maven_install()
 
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-
-git_repository(
-    name = "com_github_johnynek_bazel_jar_jar",
-    commit = "171f268569384c57c19474b04aebe574d85fde0d",  # Latest commit SHA as at 2019/02/13
-    remote = "https://github.com/johnynek/bazel_jar_jar.git",
-    shallow_since = "1594234634 -1000",
+http_archive(
+    name = "bazel_jar_jar",
+    sha256 = "a9d2ca9a2e9014f8d63dcbe9091bcb9f2d2929b3b7d16836c6225e98f9ca54df",
+    strip_prefix = "bazel_jar_jar-0.1.5",
+    url = "https://github.com/bazeltools/bazel_jar_jar/releases/download/v0.1.5/bazel_jar_jar-v0.1.5.tar.gz",
 )
 
 load(
-    "@com_github_johnynek_bazel_jar_jar//:jar_jar.bzl",
+    "@bazel_jar_jar//:jar_jar.bzl",
     "jar_jar_repositories",
 )
 
