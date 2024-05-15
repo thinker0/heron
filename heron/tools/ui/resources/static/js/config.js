@@ -148,6 +148,13 @@ var ConfigTable = React.createClass({
         if (typeof configValue == 'object') {
           rows.push([key, JSON.parse(configValue.value)]);
         } else {
+          if (configValue != null && typeof configValue == 'string'
+              && configValue.indexOf('password') !== -1) {
+            try {
+              configValue = configValue.replace(/(password=[\\"])([^"]+)/g,
+                (match, p1, p2) => p1 + p2.slice(0, 3) + '*'.repeat(p2.length - 3));
+            } catch (e) { }
+          }
           rows.push([key, configValue]);
         }
       }

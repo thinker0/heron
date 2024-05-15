@@ -14,6 +14,10 @@ pex_library(
         "aiofiles==0.5.0",
         "uvicorn==0.11.7",
         "uvloop==0.16.0",
+        "redis-py-cluster==2.1.3",
+        "expiringdict==1.2.2",
+        "PyJWT==2.8.0",
+        "cryptography==42.0.7",
     ],
     deps = [
         "//heron/common/src/python:common-py",

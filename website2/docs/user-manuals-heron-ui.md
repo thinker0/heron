@@ -53,6 +53,11 @@ $ ./bazel-bin/heron/tools/ui/src/python/heron-ui
   topologies is fetched from tracker. Default url is `http://localhost:8888`.
 * `--address` - Address to listen; Default address is `0.0.0.0`
 * `--base-url` - The base url path if operating behind proxy; Default is [`None`](https://github.com/apache/incubator-heron/blob/master/heron/tools/ui/src/python/main.py#L145)
+* `--oidc-server-uri` - The OpenID Connect server URI; Default is [`None`]
+* `--oidc-client-id` - The OpenID Connect client ID; Default is [`None`]
+* `--oidc-client-secret` - The OpenID Connect client secret; Default is [`None`]
+* `--oidc-scope` - The OpenID Connect scope; Default is [`None`]
+* `--redis-cluster` - The Redis cluster URI; Default is [`None`]
 
 ```bash
 $ heron-ui

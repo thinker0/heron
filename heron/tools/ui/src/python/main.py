@@ -43,7 +43,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from rediscluster import RedisCluster
+from expiringdict import ExpiringDict
 
+from heron.tools.ui.src.python.auth import OpenIDConnect
 from heron.tools.common.src.python.utils import config
 from heron.tools.common.src.python.clients import tracker
 from heron.common.src.python.utils import log
@@ -68,14 +71,17 @@ templates = Jinja2Templates(
 )
 topologies_router = APIRouter()
 
+# Support OIDC
+oidc = OpenIDConnect()
 
 @app.get("/")
-def home():
+def home(request: Request):
   """Redirect from root to topologies listing."""
   return RedirectResponse(url=app.url_path_for("topologies_page"))
 
 
 @topologies_router.get("")
+@oidc.require_login
 def topologies_page(request: Request) -> Response:
   """Return a rendered list of topologies."""
   return templates.TemplateResponse("topologies.html", {
@@ -86,13 +92,13 @@ def topologies_page(request: Request) -> Response:
       "request": request,
   })
 
-
 @topologies_router.get("/{cluster}/{environment}/{topology}/config")
+@oidc.require_login
 def config_page(
+    request: Request,
     cluster: str,
     environment: str,
     topology: str,
-    request: Request,
 ) -> Response:
   """Render a HTML page of config for a topology."""
   return templates.TemplateResponse(
@@ -109,9 +115,10 @@ def config_page(
 
 
 @topologies_router.get("/{cluster}/{environment}/{topology}/{component}/{instance}/exceptions")
+@oidc.require_login
 def exceptions_page(
+    request: Request,
     cluster: str, environment: str, topology: str, component: str, instance: str,
-    request: Request
 ) -> Response:
   """Render a HTML page of exceptions for a container."""
   return templates.TemplateResponse(
@@ -130,11 +137,12 @@ def exceptions_page(
 
 
 @topologies_router.get("/{cluster}/{environment}/{topology}")
+@oidc.require_login
 def planner_page(
+    request: Request,
     cluster: str,
     environment: str,
     topology: str,
-    request: Request,
 ) -> Response:
   """Render a HTML page to show information about a topology."""
   execution_state = tracker.get_execution_state(cluster, environment, topology)
@@ -194,7 +202,9 @@ def metrics(
 
 query_handler = tracker.HeronQueryHandler()
 @topologies_router.get("/metrics/timeline")
+@oidc.require_login
 def timeline(
+    request: Request,
     cluster: str,
     environ: str,
     topology: str,
@@ -233,9 +243,11 @@ def timeline(
 
 
 @topologies_router.get("/filestats/{cluster}/{environment}/{topology}/{container}/file")
+@oidc.require_login
 def file_stats_page(
+    request: Request,
     cluster: str, environment: str, topology: str,
-    container: str, request: Request, path: str = ".",
+    container: str, path: str = ".",
 ) -> Response:
   """Render a HTML page for exploring a container's files."""
   data = tracker.get_filestats(cluster, environment, topology, container, path)
@@ -255,9 +267,10 @@ def file_stats_page(
 
 
 @topologies_router.get("/{cluster}/{environment}/{topology}/{container}/file")
+@oidc.require_login
 def file_page(
-    cluster: str, environment: str, topology: str, container: str, path: str,
     request: Request,
+    cluster: str, environment: str, topology: str, container: str, path: str,
 ) -> Response:
   """Render a HTML page for retrieving a container's file."""
   return templates.TemplateResponse(
@@ -275,7 +288,9 @@ def file_page(
 
 
 @topologies_router.get("/{cluster}/{environment}/{topology}/{container}/filedata")
+@oidc.require_login
 def file_data(
+    request: Request,
     cluster: str,
     environment: str,
     topology: str,
@@ -293,8 +308,10 @@ def file_data(
 
 
 @topologies_router.get("/{cluster}/{environment}/{topology}/{container}/filedownload")
+@oidc.require_login
 def file_download(
-    cluster: str, environment: str, topology: str, container: str, path: str
+    request: Request,
+    cluster: str, environment: str, topology: str, container: str, path: str,
 ) -> Response:
   """Return a file from a container."""
   filename = os.path.basename(path)
@@ -315,7 +332,7 @@ class ApiListEnvelope(pydantic.BaseModel):
   status: str
   message: str
   version: str = VERSION
-  executiontime: int
+  executiontime: float
   result: list
 
 def api_topology_list_json(method: Callable[[], dict]) -> ApiListEnvelope:
@@ -343,7 +360,7 @@ class ApiEnvelope(pydantic.BaseModel):
   status: str
   message: str
   version: str = VERSION
-  executiontime: int
+  executiontime: float
   result: dict
 
 def api_topology_json(method: Callable[[], dict]) -> ApiEnvelope:
@@ -366,7 +383,8 @@ def api_topology_json(method: Callable[[], dict]) -> ApiEnvelope:
   )
 
 @topologies_router.get("/list.json")
-def topologies_json() -> dict:
+@oidc.require_login
+def topologies_json(request: Request) -> dict:
   """Return the (mutated) list of topologies."""
   topologies = tracker.get_topologies_states()
   result = {}
@@ -386,7 +404,9 @@ def topologies_json() -> dict:
 @topologies_router.get(
     "/{cluster}/{environment}/{topology}/logicalplan.json", response_model=ApiEnvelope
 )
-def logical_plan_json(cluster: str, environment: str, topology: str) -> ApiEnvelope:
+@oidc.require_login
+def logical_plan_json(request: Request,
+    cluster: str, environment: str, topology: str) -> ApiEnvelope:
   """Return the logical plan object for a topology."""
   return api_topology_json(lambda: tracker.get_logical_plan(
       cluster, environment, topology, None,
@@ -396,7 +416,9 @@ def logical_plan_json(cluster: str, environment: str, topology: str) -> ApiEnvel
 @topologies_router.get(
     "/{cluster}/{environment}/{topology}/packingplan.json", response_model=ApiEnvelope
 )
-def packing_plan_json(cluster: str, environment: str, topology: str) -> ApiEnvelope:
+@oidc.require_login
+def packing_plan_json(request: Request,
+    cluster: str, environment: str, topology: str) -> ApiEnvelope:
   """Return the packing plan object for a topology."""
   return api_topology_json(lambda: tracker.get_packing_plan(
       cluster, environment, topology, None,
@@ -406,7 +428,9 @@ def packing_plan_json(cluster: str, environment: str, topology: str) -> ApiEnvel
 @topologies_router.get(
     "/{cluster}/{environment}/{topology}/physicalplan.json", response_model=ApiEnvelope
 )
-def physical_plan_json(cluster: str, environment: str, topology: str) -> ApiEnvelope:
+@oidc.require_login
+def physical_plan_json(request: Request,
+                       cluster: str, environment: str, topology: str) -> ApiEnvelope:
   """Return the physical plan object for a topology."""
   return api_topology_json(lambda: tracker.get_physical_plan(
       cluster, environment, topology, None,
@@ -416,7 +440,9 @@ def physical_plan_json(cluster: str, environment: str, topology: str) -> ApiEnve
 @topologies_router.get(
     "/{cluster}/{environment}/{topology}/executionstate.json", response_model=ApiEnvelope
 )
-def execution_state_json(cluster: str, environment: str, topology: str) -> ApiEnvelope:
+@oidc.require_login
+def execution_state_json(request: Request,
+                         cluster: str, environment: str, topology: str) -> ApiEnvelope:
   """Return the execution state object for a topology."""
   return api_topology_json(lambda: tracker.get_execution_state(
       cluster, environment, topology,
@@ -427,7 +453,9 @@ def execution_state_json(cluster: str, environment: str, topology: str) -> ApiEn
     "/{cluster}/{environment}/{topology}/schedulerlocation.json",
     response_model=ApiEnvelope,
 )
-def scheduler_location_json(cluster: str, environment: str, topology: str) -> ApiEnvelope:
+@oidc.require_login
+def scheduler_location_json(request: Request,
+                            cluster: str, environment: str, topology: str) -> ApiEnvelope:
   """Unimplemented method which is currently a duplicate of execution state."""
   return api_topology_json(lambda: tracker.get_scheduler_location(
       cluster, environment, topology,
@@ -438,7 +466,9 @@ def scheduler_location_json(cluster: str, environment: str, topology: str) -> Ap
     "/{cluster}/{environment}/{topology}/{component}/exceptions.json",
     response_model=ApiListEnvelope,
 )
-def exceptions_json(cluster: str, environment: str, topology: str,
+@oidc.require_login
+def exceptions_json(request: Request,
+                    cluster: str, environment: str, topology: str,
                     component: str) -> ApiListEnvelope:
   """Return a list of exceptions for a component."""
   return api_topology_list_json(lambda: tracker.get_component_exceptions(
@@ -449,8 +479,9 @@ def exceptions_json(cluster: str, environment: str, topology: str,
     "/{cluster}/{environment}/{topology}/{component}/exceptionsummary.json",
     response_model=ApiEnvelope,
 )
-def exception_summary_json(
-    cluster: str, environment: str, topology: str, component: str
+@oidc.require_login
+def exception_summary_json(request: Request,
+                           cluster: str, environment: str, topology: str, component: str
 ) -> ApiEnvelope:
   """Return a table of exception classes to totals."""
   started = time.time()
@@ -490,6 +521,7 @@ def exception_summary_json(
 @topologies_router.get(
     "/{cluster}/{environment}/{topology}/{instance}/pid"
 )
+@oidc.require_login
 def pid_snippet(
     request: Request,
     cluster: str,
@@ -520,6 +552,7 @@ def pid_snippet(
 @topologies_router.get(
     "/{cluster}/{environment}/{topology}/{instance}/jstack"
 )
+@oidc.require_login
 def jstack_snippet(
     request: Request,
     cluster: str,
@@ -549,6 +582,7 @@ def jstack_snippet(
 @topologies_router.get(
     "/{cluster}/{environment}/{topology}/{instance}/jmap"
 )
+@oidc.require_login
 def jmap_snippet(
     request: Request,
     cluster: str,
@@ -585,6 +619,7 @@ def jmap_snippet(
 @topologies_router.get(
     "/{cluster}/{environment}/{topology}/{instance}/histo"
 )
+@oidc.require_login
 def histogram_snippet(
     request: Request,
     cluster: str,
@@ -644,6 +679,11 @@ def show_version(_, __, value):
 @click.option("--base-url", "base_url_option", default=DEFAULT_BASE_URL)
 @click.option("--host", default=DEFAULT_ADDRESS)
 @click.option("--port", type=int, default=DEFAULT_PORT)
+@click.option("--redis-cluster", "redis_cluster_url_option", type=str, default=None)
+@click.option("--oidc-server-uri", "oidc_server_uri", type=str, default=None)
+@click.option("--oidc-client-id", "oidc_client_id", type=str, default=None)
+@click.option("--oidc-client-secret", "oidc_client_secret", type=str, default=None)
+@click.option("--oidc-scope", "oidc_scope", type=str, default="openid profile")
 @click.option("--verbose", is_flag=True)
 @click.option(
     "--version",
@@ -653,7 +693,11 @@ def show_version(_, __, value):
     callback=show_version,
 )
 def cli(
-    host: str, port: int, base_url_option: str, tracker_url_option: str, verbose: bool
+    host: str, port: int, base_url_option: str, tracker_url_option: str,
+    redis_cluster_url_option: str,
+    oidc_server_uri: str, oidc_client_id: str,
+    oidc_client_secret: str, oidc_scope: str,
+    verbose: bool
 ) -> None:
   """Start a web UI for heron which renders information from the tracker."""
   global base_url
@@ -663,6 +707,19 @@ def cli(
 
   tracker.tracker_url = tracker_url_option
 
+  if redis_cluster_url_option is not None:
+    Log.info('Starting redis client: %s' % redis_cluster_url_option)
+    # Cache for user authentication information
+    cache = ExpiringDict(max_len=100, max_age_seconds=1800)
+    redis_cluster = RedisCluster.from_url(redis_cluster_url_option)
+    oidc.set_session_store(cache, redis_cluster)
+  if oidc_server_uri is not None:
+    oidc.initialize_oidc(
+        base_authorization_server_uri=oidc_server_uri,
+        client_id=oidc_client_id,
+        client_secret=oidc_client_secret,
+        scope=oidc_scope,
+    )
   uvicorn.run(app, host=host, port=port, log_level=log_level)
 
 
