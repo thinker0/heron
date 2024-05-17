@@ -7,7 +7,7 @@ pex_library(
     ),
     reqs = [
         "PyYAML==5.4.1",
-        "requests==2.31.0",
+        "requests==2.29.0",
         "netifaces==0.10.6",
     ],
     deps = [

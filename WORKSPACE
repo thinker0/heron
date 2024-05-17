@@ -236,13 +236,13 @@ PEX_PKG = "https://files.pythonhosted.org/packages/f5/75/df33045e065a49b6b398073
 
 PYTEST_PKG = "https://files.pythonhosted.org/packages/40/76/86f886e750b81a4357b6ed606b2bcf0ce6d6c27ad3c09ebf63ed674fc86e/pytest-6.2.5-py3-none-any.whl"
 
-REQUESTS_PKG = "https://files.pythonhosted.org/packages/70/8e/0e2d847013cb52cd35b38c009bb167a1a26b2ce6cd6965bf26b47bc0bf44/requests-2.31.0-py3-none-any.whl"
+REQUESTS_PKG = "https://files.pythonhosted.org/packages/cf/e1/2aa539876d9ed0ddc95882451deb57cfd7aa8dbf0b8dbce68e045549ba56/requests-2.29.0-py3-none-any.whl"
 
 SETUPTOOLS_PKG = "https://files.pythonhosted.org/packages/f7/29/13965af254e3373bceae8fb9a0e6ea0d0e571171b80d6646932131d6439b/setuptools-69.5.1-py3-none-any.whl"
 
 WHEEL_PKG = "https://files.pythonhosted.org/packages/27/d6/003e593296a85fd6ed616ed962795b2f87709c3eee2bca4f6d0fe55c6d00/wheel-0.37.1-py2.py3-none-any.whl"
 
-CHARSET_PKG = "https://files.pythonhosted.org/packages/68/2b/02e9d6a98ddb73fa238d559a9edcc30b247b8dc4ee848b6184c936e99dc0/charset_normalizer-3.0.1-py3-none-any.whl"
+CHARSET_PKG = "https://files.pythonhosted.org/packages/28/76/e6222113b83e3622caa4bb41032d0b1bf785250607392e1b778aca0b8a7d/charset_normalizer-3.3.2-py3-none-any.whl"
 
 IDNA_PKG = "https://files.pythonhosted.org/packages/04/a2/d918dcd22354d8958fe113e1a3630137e0fc8b44859ade3063982eacd2a4/idna-3.3-py3-none-any.whl"
 
@@ -273,8 +273,8 @@ http_file(
 
 http_file(
     name = "charset_pkg",
-    downloaded_file_path = "charset_normalizer-3.0.1-py3-none-any.whl",
-    sha256 = "7e189e2e1d3ed2f4aebabd2d5b0f931e883676e51c7624826e0a4e5fe8a0bf24",
+    downloaded_file_path = "charset_normalizer-3.3.2-py3-none-any.whl",
+    sha256 = "3e4d1f6587322d2788836a99c69062fbb091331ec940e02d12d179c1d53e25fc",
     urls = [CHARSET_PKG],
 )
 
@@ -301,8 +301,8 @@ http_file(
 
 http_file(
     name = "requests_pkg",
-    downloaded_file_path = "requests-2.31.0-py3-none-any.whl",
-    sha256 = "58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f",
+    downloaded_file_path = "requests-2.29.0-py2.py3-none-any.whl",
+    sha256 = "e8f3c9be120d3333921d213eef078af392fba3933ab7ed2d1cba3b56f2568c3b",
     urls = [REQUESTS_PKG],
 )
 
