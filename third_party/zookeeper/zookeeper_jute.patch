@@ -1,6 +1,6 @@
-diff -ruN apache-zookeeper-3.8.0/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.c apache-zookeeper-3.8.0.generated/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.c
---- apache-zookeeper-3.8.0/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.c	1969-12-31 19:00:00.000000000 -0500
-+++ apache-zookeeper-3.8.0.generated/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.c	2022-05-31 23:55:06.000000000 -0400
+diff -ruN apache-zookeeper-3.8.4/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.c apache-zookeeper-3.8.4.generated/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.c
+--- apache-zookeeper-3.8.4/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.c	1969-12-31 19:00:00.000000000 -0500
++++ apache-zookeeper-3.8.4.generated/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.c	2022-05-31 23:55:06.000000000 -0400
 @@ -0,0 +1,1704 @@
 +/**
 +* Licensed to the Apache Software Foundation (ASF) under one
@@ -1706,9 +1706,9 @@ diff -ruN apache-zookeeper-3.8.0/zookeeper-client/zookeeper-client-c/generated/z
 +void deallocate_MultiTxn(struct MultiTxn*v){
 +    deallocate_Txn_vector(&v->txns);
 +}
-diff -ruN apache-zookeeper-3.8.0/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.h apache-zookeeper-3.8.0.generated/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.h
---- apache-zookeeper-3.8.0/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.h	1969-12-31 19:00:00.000000000 -0500
-+++ apache-zookeeper-3.8.0.generated/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.h	2022-05-31 23:55:06.000000000 -0400
+diff -ruN apache-zookeeper-3.8.4/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.h apache-zookeeper-3.8.4.generated/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.h
+--- apache-zookeeper-3.8.4/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.h	1969-12-31 19:00:00.000000000 -0500
++++ apache-zookeeper-3.8.4.generated/zookeeper-client/zookeeper-client-c/generated/zookeeper.jute.h	2022-05-31 23:55:06.000000000 -0400
 @@ -0,0 +1,617 @@
 +/**
 +* Licensed to the Apache Software Foundation (ASF) under one
