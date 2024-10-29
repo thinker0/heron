@@ -25,7 +25,7 @@ fi
 
 ZK_DIST=$1
 
-curl -O "https://archive.apache.org/dist/zookeeper/$ZK_DIST/apache-$ZK_DIST-bin.tar.gz"
+curl -O "https://dlcdn.apache.org/zookeeper/$ZK_DIST/apache-$ZK_DIST-bin.tar.gz"
 tar -xzf ./apache-$ZK_DIST-bin.tar.gz -C /opt
 rm ./apache-$ZK_DIST-bin.tar.gz
 
