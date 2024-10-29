@@ -401,7 +401,7 @@ public class PrometheusSink extends AbstractWebSink {
       try {
         map.put(r.getName(), Double.valueOf(r.getValue()));
       } catch (NumberFormatException ne) {
-        LOG.log(Level.SEVERE, "Could not parse metric, Name: "
+        LOG.log(Level.INFO, "Could not parse metric, Name: "
             + r.getName() + " Value: " + r.getValue(), ne);
       }
     }
