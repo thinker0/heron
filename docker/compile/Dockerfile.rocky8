@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-FROM rockylinux:8.5
+FROM rockylinux:8.9
 
 RUN yum -y upgrade \
    && yum -y install \
@@ -40,7 +40,7 @@ RUN yum -y upgrade \
       which \
       tree \
       java-11-openjdk \
-      java-11-openjdk-devel 
+      java-11-openjdk-devel
 
 RUN update-alternatives --set python /usr/bin/python3.9
 

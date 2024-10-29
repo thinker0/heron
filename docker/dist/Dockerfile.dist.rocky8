@@ -16,7 +16,7 @@
 #  under the License.
 
 #syntax=docker/dockerfile:1.2
-FROM rockylinux:8.5
+FROM rockylinux:8.9
 
 RUN yum -y upgrade \
     && yum -y install epel-release \

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-FROM rockylinux:8.5
+FROM rockylinux:8.9
 
 # This is passed to the heron build command via the --config flag
 ENV TARGET_PLATFORM linux

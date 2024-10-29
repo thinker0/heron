@@ -184,7 +184,7 @@ following:
 Here's an example:
 
 ```dockerfile
-FROM rockylinux:8.5
+FROM rockylinux:8.9
  ```
 
 ### Step 2 --- A `TARGET_PLATFORM` environment variable using the [`ENV`](https://docs.docker.com/engine/reference/builder/#env) instruction.
