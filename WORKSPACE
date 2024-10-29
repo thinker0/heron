@@ -60,7 +60,7 @@ logback_verison = "1.2.11"
 
 distributedlog_version = "4.14.5"
 
-http_client_version = "4.5.2"
+http_client_version = "4.5.14"
 
 # heron API server
 jetty_version = "9.4.6.v20170531"
