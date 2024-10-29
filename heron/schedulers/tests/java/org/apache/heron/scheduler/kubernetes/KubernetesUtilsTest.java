@@ -31,6 +31,8 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import org.apache.heron.scheduler.TopologySubmissionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.kubernetes.client.openapi.models.V1EnvVar;
 import io.kubernetes.client.openapi.models.V1EnvVarSource;
@@ -38,7 +40,7 @@ import io.kubernetes.client.openapi.models.V1ObjectFieldSelector;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KubernetesUtilsTest {
-
+  private static final Logger logger = LoggerFactory.getLogger(KubernetesUtilsTest.class);
   @Test
   public void testMergeListsDedupe() {
     final String description = "Pod Template Environment Variables";
@@ -98,10 +100,13 @@ public class KubernetesUtilsTest {
 
     // Merge both lists.
     Assert.assertTrue("<primaryList> and <secondaryList> merged and deduplicated",
-        expectedEnvVars.containsAll(
+        Arrays.asList(heronEnvVars, inputEnvVars).containsAll(
             commonUtils.mergeListsDedupe(heronEnvVars, inputEnvVars,
                 Comparator.comparing(V1EnvVar::getName), description)));
-
+    System.out.printf("Expected merged and deduplicated lists: %s%n", expectedEnvVars);
+    System.out.printf("Merged and deduplicated lists: %s%n",
+        commonUtils.mergeListsDedupe(heronEnvVars, inputEnvVars,
+            Comparator.comparing(V1EnvVar::getName), description));
     // Expect thrown error.
     String errorMessage = "";
     try {

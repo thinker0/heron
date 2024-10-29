@@ -793,14 +793,12 @@ public class KubernetesContextTest {
     // With readOnly.
     final Map<String, Map<VolumeConfigKeys, String>> expectedWithReadOnly =
         ImmutableMap.of(volumeNameValid, Map.of(VolumeConfigKeys.server, "nfs-server.default.local",
-                                                VolumeConfigKeys.readOnly, "true",
                                                 VolumeConfigKeys.pathOnNFS, passingValue,
                                                 VolumeConfigKeys.path, passingValue,
                                                 VolumeConfigKeys.subPath, passingValue,
                                                 VolumeConfigKeys.readOnly, passingValue));
     final Config configWithReadOnly = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "server"), "nfs-server.default.local")
-        .put(String.format(keyPattern, volumeNameValid, "readOnly"), "true")
         .put(String.format(keyPattern, volumeNameValid, "pathOnNFS"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "path"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "subPath"), passingValue)
@@ -829,7 +827,6 @@ public class KubernetesContextTest {
     // Ignored.
     final Config configIgnored = Config.newBuilder()
         .put(String.format(keyPattern, volumeNameValid, "server"), "nfs-server.default.local")
-        .put(String.format(keyPattern, volumeNameValid, "readOnly"), "true")
         .put(String.format(keyPattern, volumeNameValid, "pathOnNFS"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "path"), passingValue)
         .put(String.format(keyPattern, volumeNameValid, "subPath"), passingValue)
