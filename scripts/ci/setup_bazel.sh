@@ -30,9 +30,10 @@ if [ "$#" -ne 1 ]; then
 fi
 BAZEL_OS=$1
 BAZEL_VERSION=6.3.2
+ARCH=$(uname -m)
 
 # Install Bazel
-BAZEL_INSTALLER=bazel-$BAZEL_VERSION-installer-$BAZEL_OS-x86_64.sh
+BAZEL_INSTALLER=bazel-$BAZEL_VERSION-installer-$BAZEL_OS-$ARCH.sh
 BAZEL_INSTALLER_LOC="https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/$BAZEL_INSTALLER"
 
 wget -O /tmp/$BAZEL_INSTALLER $BAZEL_INSTALLER_LOC
