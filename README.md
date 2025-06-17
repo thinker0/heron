@@ -32,7 +32,7 @@ Confluence: https://cwiki.apache.org/confluence/display/HERON
 
 #### Heron Requirements:
  * Java 11
- * Python 3.6
+ * Python 3.9
  * Bazel 6.3.2
 
 ## Contact
