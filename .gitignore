@@ -26,6 +26,7 @@ tools/cpp/gcc
 tools/cpp/g++
 tools/jdk/ijar
 .DS_Store
+MODULE.bazel.lock
 
 # Vim
 .*.swp
