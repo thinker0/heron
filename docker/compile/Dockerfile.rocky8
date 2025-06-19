@@ -27,6 +27,8 @@ RUN yum -y upgrade \
       file \
       gcc \
       gcc-c++ \
+      gcc-toolset-14-gcc \
+      gcc-toolset-14-gcc-c++ \
       git \
       glibc-langpack-en \
       kernel-devel \
@@ -53,5 +55,13 @@ RUN wget -O /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/
       && chmod +x /tmp/bazel.sh \
       && /tmp/bazel.sh \
       && rm -rf /tmp/bazel.sh
+
+ENV PATH /opt/rh/gcc-toolset-14/root/usr/bin:${PATH}
+ENV LD_LIBRARY_PATH /opt/rh/gcc-toolset-14/root/lib64
+ENV MANPATH /opt/rh/gcc-toolset-14/root/usr/share/man
+
+RUN /usr/bin/ln -sfT /opt/rh/gcc-toolset-14/root/usr/bin/gcc /usr/bin/gcc \
+      && /usr/bin/ln -sfT /opt/rh/gcc-toolset-14/root/usr/bin/g++ /usr/bin/g++ \
+      && /usr/bin/ln -sfT /opt/rh/gcc-toolset-14/root/usr/bin/cpp /usr/bin/cpp
 
 ADD scripts/compile-platform.sh /compile-platform.sh
