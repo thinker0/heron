@@ -195,7 +195,7 @@ def _pex_binary_impl(ctx):
         "--output-file",
         deploy_pex.path,
         "--disable-cache",
-        "--python-shebang", "#!/usr/bin/env python3",
+        "--python-shebang", "#!/usr/bin/env python3.9",
         "--no-compile",
         "--include-tools",
         "--layout zipapp",

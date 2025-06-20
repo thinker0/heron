@@ -16,7 +16,7 @@ set -o errexit -o nounset -o pipefail
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-bazelVersion=6.3.2
+bazelVersion=7.6.1
 bazel_install() {
     apt-get install -y automake cmake gcc g++ zlib1g-dev zip pkg-config wget libssl-dev libunwind-dev
     mkdir -p /opt/bazel
@@ -55,10 +55,10 @@ apt-get -qy update
 # install deps
 apt-get install -qy ant vim zip mc curl wget openjdk-11-jdk scala git python3-setuptools python3-venv python3-dev libtool-bin python-is-python3
 
-# install docker 
+# install docker
 apt-get install -qy docker-ce docker-ce-cli containerd.io
 usermod -aG docker vagrant
 
-if [ $mode == "master" ]; then 
+if [ $mode == "master" ]; then
     bazel_install
 fi
