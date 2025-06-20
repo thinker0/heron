@@ -6,9 +6,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -32,7 +32,7 @@ heron_git_release() {
   then
     exit 1
   fi
-  if [ "${git_release}" = "HEAD" ];
+  if [[ "${git_release}" = "HEAD" || "${git_release}" = "main" ]];
   then
     git_release=$(git describe --tags)
     if [[ $? != 0 ]];
@@ -133,7 +133,7 @@ run_build() {
   verify_source_exists $SOURCE_TARBALL
 
   export TARGET_PLATFORM=${TARGET_PLATFORM}
-  export HERON_VERSION=${HERON_VERSION} 
+  export HERON_VERSION=${HERON_VERSION}
   export SCRATCH_DIR=${SCRATCH_DIR}
   export SOURCE_TARBALL=${SOURCE_TARBALL}
   export OUTPUT_DIRECTORY=${OUTPUT_DIRECTORY}

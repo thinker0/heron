@@ -6,9 +6,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,7 +27,8 @@ function copyFileToDest() {
 
   cp $1 $2
 }
-
+echo "Environment variables:"
+env | grep -E '^(TARGET_PLATFORM|SCRATCH_DIR|SOURCE_TARBALL|OUTPUT_DIRECTORY|HERON_VERSION|HERON_GIT_REV|HERON_BUILD_VERSION|HERON_BUILD_HOST|HERON_BUILD_USER|HERON_BUILD_TIME|HERON_TREE_STATUS)='
 echo "Building heron with version $HERON_VERSION for platform $TARGET_PLATFORM"
 
 mkdir -p $SCRATCH_DIR
