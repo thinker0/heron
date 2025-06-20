@@ -69,9 +69,9 @@ TManagerClient::TManagerClient(shared_ptr<EventLoop> eventLoop, const NetworkOpt
   reconnect_timer_cb = [this]() { this->OnReConnectTimer(); };
   heartbeat_timer_cb = [this]() { this->OnHeartbeatTimer(); };
 
-  InstallResponseHandler(make_unique<proto::tmanager::StMgrRegisterRequest>(),
+  InstallResponseHandler(std::make_unique<proto::tmanager::StMgrRegisterRequest>(),
                          &TManagerClient::HandleRegisterResponse);
-  InstallResponseHandler(make_unique<proto::tmanager::StMgrHeartbeatRequest>(),
+  InstallResponseHandler(std::make_unique<proto::tmanager::StMgrHeartbeatRequest>(),
                          &TManagerClient::HandleHeartbeatResponse);
   InstallMessageHandler(&TManagerClient::HandleNewAssignmentMessage);
   InstallMessageHandler(&TManagerClient::HandleStatefulCheckpointMessage);
@@ -237,7 +237,7 @@ void TManagerClient::CleanInstances() {
 }
 
 void TManagerClient::SendRegisterRequest() {
-  auto request = make_unique<proto::tmanager::StMgrRegisterRequest>();
+  auto request = std::make_unique<proto::tmanager::StMgrRegisterRequest>();
 
   sp_string cwd;
   FileUtils::getCwd(cwd);
@@ -264,14 +264,14 @@ void TManagerClient::SetInstanceInfo(const std::vector<proto::system::Instance*>
     }
 
     for (auto iter = _instances.begin(); iter != _instances.end(); ++iter) {
-      auto instance = make_unique<proto::system::Instance>();
+      auto instance = std::make_unique<proto::system::Instance>();
       instance->CopyFrom(*(*iter));
       instances_.insert(std::move(instance));
     }
 }
 
 void TManagerClient::SendHeartbeatRequest() {
-  auto request = make_unique<proto::tmanager::StMgrHeartbeatRequest>();
+  auto request = std::make_unique<proto::tmanager::StMgrHeartbeatRequest>();
   request->set_heartbeat_time(time(nullptr));
   // TODO(vikasr) Send actual stats
   request->mutable_stats();

@@ -131,7 +131,7 @@ CheckpointGateway::CheckpointInfo& CheckpointGateway::get_info(sp_int32 _task_id
   auto iter = pending_tuples_.find(_task_id);
   if (iter == pending_tuples_.end()) {
     auto info =
-        make_unique<CheckpointInfo>(_task_id, neighbour_calculator_->get_upstreamers(_task_id));
+        std::make_unique<CheckpointInfo>(_task_id, neighbour_calculator_->get_upstreamers(_task_id));
     pending_tuples_[_task_id] = std::move(info);
     return *pending_tuples_[_task_id];
   } else {

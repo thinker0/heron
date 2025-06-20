@@ -42,7 +42,7 @@ XorManager::XorManager(std::shared_ptr<EventLoop> eventLoop, sp_int32 _timeout,
   eventLoop_->registerTimer([this](EventLoop::Status status) { this->rotate(status); }, false,
                             _timeout * 1000000);
   for (auto iter = _task_ids.begin(); iter != _task_ids.end(); ++iter) {
-    tasks_[*iter] = make_unique<RotatingMap>(n_buckets_);
+    tasks_[*iter] = std::make_unique<RotatingMap>(n_buckets_);
   }
 }
 

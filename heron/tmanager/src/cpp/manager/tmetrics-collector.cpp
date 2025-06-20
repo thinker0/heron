@@ -53,7 +53,7 @@ TMetricsCollector::TMetricsCollector(sp_int32 _max_interval, std::shared_ptr<Eve
     : max_interval_(_max_interval),
       eventLoop_(eventLoop),
       metrics_sinks_yaml_(metrics_sinks_yaml),
-      tmetrics_info_(make_unique<common::TManagerMetrics>(metrics_sinks_yaml, eventLoop)),
+      tmetrics_info_(std::make_unique<common::TManagerMetrics>(metrics_sinks_yaml, eventLoop)),
       start_time_(time(NULL)) {
   interval_ = config::HeronInternalsConfigReader::Instance()
                   ->GetHeronTmanagerMetricsCollectorPurgeIntervalSec();
@@ -102,7 +102,7 @@ void TMetricsCollector::AddMetric(const PublishMetrics& _metrics) {
 
 unique_ptr<MetricResponse> TMetricsCollector::GetMetrics(const MetricRequest& _request,
                                               const proto::api::Topology& _topology) {
-  auto response = make_unique<MetricResponse>();
+  auto response = std::make_unique<MetricResponse>();
 
   if (metrics_.find(_request.component_name()) == metrics_.end()) {
     bool component_exists = false;
@@ -171,7 +171,7 @@ void TMetricsCollector::GetExceptionsHelper(const ExceptionLogRequest& request,
 
 unique_ptr<ExceptionLogResponse> TMetricsCollector::GetExceptions(
                                                             const ExceptionLogRequest& request) {
-  auto response = make_unique<ExceptionLogResponse>();
+  auto response = std::make_unique<ExceptionLogResponse>();
   if (metrics_.find(request.component_name()) == metrics_.end()) {
     LOG(ERROR) << "GetExceptions request received for unknown component "
                << request.component_name();
@@ -187,7 +187,7 @@ unique_ptr<ExceptionLogResponse> TMetricsCollector::GetExceptions(
 
 unique_ptr<ExceptionLogResponse> TMetricsCollector::GetExceptionsSummary(
                                                               const ExceptionLogRequest& request) {
-  auto response = make_unique<ExceptionLogResponse>();
+  auto response = std::make_unique<ExceptionLogResponse>();
 
   if (metrics_.find(request.component_name()) == metrics_.end()) {
     LOG(ERROR) << "GetExceptionSummary request received for unknown component "
@@ -200,7 +200,7 @@ unique_ptr<ExceptionLogResponse> TMetricsCollector::GetExceptionsSummary(
   response->mutable_status()->set_message("OK");
 
   // Owns this pointer.
-  auto all_exceptions = make_unique<ExceptionLogResponse>();
+  auto all_exceptions = std::make_unique<ExceptionLogResponse>();
   GetExceptionsHelper(request, *all_exceptions);  // Store un aggregated exceptions.
   AggregateExceptions(*all_exceptions, *response);
 
@@ -225,7 +225,7 @@ void TMetricsCollector::AggregateExceptions(const ExceptionLogResponse& all_exce
     if (pos != std::string::npos) {
       const std::string class_name = stack_trace.substr(0, pos);
       if (exception_summary.find(class_name) == exception_summary.end()) {
-        auto new_exception = make_unique<TmanagerExceptionLog>();
+        auto new_exception = std::make_unique<TmanagerExceptionLog>();
         new_exception->CopyFrom(log);
         new_exception->set_stacktrace(class_name);
         exception_summary[class_name] = std::move(new_exception);
@@ -354,7 +354,7 @@ void TMetricsCollector::InstanceMetrics::AddExceptions(const TmanagerExceptionLo
   // TODO(kramasamy): Aggregate exceptions across minutely buckets. Try to avoid duplication of
   // hash-fuction
   // used to aggregate in heron-worker.
-  auto new_exception = make_unique<TmanagerExceptionLog>();
+  auto new_exception = std::make_unique<TmanagerExceptionLog>();
   new_exception->CopyFrom(exception);
   exceptions_.push_back(std::move(new_exception));
   sp_uint32 max_exception = config::HeronInternalsConfigReader::Instance()
@@ -400,7 +400,7 @@ TMetricsCollector::Metric::Metric(const sp_string& name,
       all_time_nitems_(0),
       bucket_interval_(bucket_interval) {
   for (sp_int32 i = 0; i < nbuckets; ++i) {
-    data_.push_back(make_unique<TimeBucket>(bucket_interval_));
+    data_.push_back(std::make_unique<TimeBucket>(bucket_interval_));
   }
 }
 
@@ -408,7 +408,7 @@ TMetricsCollector::Metric::~Metric() {}
 
 void TMetricsCollector::Metric::Purge() {
   data_.pop_back();
-  data_.push_front(make_unique<TimeBucket>(bucket_interval_));
+  data_.push_front(std::make_unique<TimeBucket>(bucket_interval_));
 }
 
 void TMetricsCollector::Metric::AddValueToMetric(const sp_string& _value) {

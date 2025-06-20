@@ -76,7 +76,7 @@ StMgrClient::StMgrClient(shared_ptr<EventLoop> eventLoop, const NetworkOptions& 
   reconnect_other_streammgrs_interval_sec_ =
       config::HeronInternalsConfigReader::Instance()->GetHeronStreammgrClientReconnectIntervalSec();
 
-  InstallResponseHandler(make_unique<proto::stmgr::StrMgrHelloRequest>(),
+  InstallResponseHandler(std::make_unique<proto::stmgr::StrMgrHelloRequest>(),
           &StMgrClient::HandleHelloResponse);
   InstallMessageHandler(&StMgrClient::HandleTupleStreamMessage);
 
@@ -181,7 +181,7 @@ void StMgrClient::OnReConnectTimer() {
 }
 
 void StMgrClient::SendHelloRequest() {
-  auto request = make_unique<proto::stmgr::StrMgrHelloRequest>();
+  auto request = std::make_unique<proto::stmgr::StrMgrHelloRequest>();
   request->set_topology_name(topology_name_);
   request->set_topology_id(topology_id_);
   request->set_stmgr(our_stmgr_id_);
@@ -269,7 +269,7 @@ void StMgrClient::SendStartBackPressureMessage() {
   REQID_Generator generator;
   REQID rand = generator.generate();
   // generator.generate(rand);
-  auto message = make_unique<proto::stmgr::StartBackPressureMessage>();
+  auto message = std::make_unique<proto::stmgr::StartBackPressureMessage>();
   message->set_topology_name(topology_name_);
   message->set_topology_id(topology_id_);
   message->set_stmgr(our_stmgr_id_);
@@ -281,7 +281,7 @@ void StMgrClient::SendStopBackPressureMessage() {
   REQID_Generator generator;
   REQID rand = generator.generate();
   // generator.generate(rand);
-  auto message = make_unique<proto::stmgr::StopBackPressureMessage>();
+  auto message = std::make_unique<proto::stmgr::StopBackPressureMessage>();
   message->set_topology_name(topology_name_);
   message->set_topology_id(topology_id_);
   message->set_stmgr(our_stmgr_id_);

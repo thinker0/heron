@@ -114,7 +114,7 @@ TManager::TManager(const std::string& _zk_hostport, const std::string& _topology
   do_reassign_ = false;
 
   server_establish_attempts_ = 0;
-  tmanager_location_ = make_unique<proto::tmanager::TManagerLocation>();
+  tmanager_location_ = std::make_unique<proto::tmanager::TManagerLocation>();
   tmanager_location_->set_topology_name(_topology_name);
   tmanager_location_->set_topology_id(_topology_id);
   tmanager_location_->set_host(myhost_name_);
@@ -293,7 +293,7 @@ void TManager::SetTManagerLocationDone(proto::system::StatusCode _code) {
   LOG(INFO) << "Successfully set ourselves as server\n";
 
   // Lets now read the topology
-  topology_ = make_unique<proto::api::Topology>();
+  topology_ = std::make_unique<proto::api::Topology>();
   state_mgr_->GetTopology(tmanager_location_->topology_name(), *topology_,
                           [this](proto::system::StatusCode code) {
     this->GetTopologyDone(code);
@@ -331,7 +331,7 @@ void TManager::GetTopologyDone(proto::system::StatusCode _code) {
     ckpt_options.set_max_packet_size(config::HeronInternalsConfigReader::Instance()
                                            ->GetHeronTmanagerNetworkServerOptionsMaximumPacketMb() *
                                        1024 * 1024);
-    ckptmgr_client_ = make_unique<CkptMgrClient>(eventLoop_, ckpt_options,
+    ckptmgr_client_ = std::make_unique<CkptMgrClient>(eventLoop_, ckpt_options,
                                         topology_->name(), topology_->id(),
                                         std::bind(&TManager::HandleCleanStatefulCheckpointResponse,
                                         this, std::placeholders::_1));
@@ -402,7 +402,7 @@ void TManager::SetupStatefulController(
     this->HandleStatefulCheckpointSave(new_ckpts);
   };
   // Instantiate the stateful restorer/coordinator
-  stateful_controller_ = make_unique<StatefulController>(topology_->name(), _ckpt, state_mgr_,
+  stateful_controller_ = std::make_unique<StatefulController>(topology_->name(), _ckpt, state_mgr_,
                                                                 start_time_, mMetricsMgrClient, cb);
   LOG(INFO) << "Starting timer to checkpoint state every "
             << stateful_checkpoint_interval << " seconds";
@@ -514,7 +514,7 @@ void TManager::GetPhysicalPlanDone(shared_ptr<proto::system::PhysicalPlan> _ppla
                                          ->GetHeronTmanagerNetworkServerOptionsMaximumPacketMb() *
                                      1_MB);
   server_options.set_socket_family(PF_INET);
-  server_ = make_unique<TManagerServer>(eventLoop_, server_options, metrics_collector_, this);
+  server_ = std::make_unique<TManagerServer>(eventLoop_, server_options, metrics_collector_, this);
 
   sp_int32 retval = server_->Start();
   if (retval != SP_OK) {
@@ -530,7 +530,7 @@ void TManager::GetPhysicalPlanDone(shared_ptr<proto::system::PhysicalPlan> _ppla
           ->GetHeronTmanagerNetworkControllerOptionsMaximumPacketMb() *
       1_MB);
   controller_options.set_socket_family(PF_INET);
-  tmanager_controller_ = make_unique<TController>(eventLoop_, controller_options, this);
+  tmanager_controller_ = std::make_unique<TController>(eventLoop_, controller_options, this);
 
   retval = tmanager_controller_->Start();
   if (retval != SP_OK) {
@@ -550,7 +550,7 @@ void TManager::GetPhysicalPlanDone(shared_ptr<proto::system::PhysicalPlan> _ppla
                                         ->GetHeronTmanagerNetworkStatsOptionsMaximumPacketMb() *
                                     1_MB);
   stats_options.set_socket_family(PF_INET);
-  stats_ = make_unique<StatsInterface>(eventLoop_, stats_options, metrics_collector_, this);
+  stats_ = std::make_unique<StatsInterface>(eventLoop_, stats_options, metrics_collector_, this);
 }
 
 void TManager::ActivateTopology(VCallback<proto::system::StatusCode> cb) {

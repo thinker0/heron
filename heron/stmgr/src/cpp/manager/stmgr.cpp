@@ -652,7 +652,7 @@ void StMgr::PopulateStreamConsumers(
       CHECK(iter != _component_to_task_ids.end());
       const std::vector<sp_int32>& component_task_ids = iter->second;
       if (stream_consumers_.find(p) == stream_consumers_.end()) {
-        stream_consumers_[p] = make_unique<StreamConsumers>(is, *schema, component_task_ids);
+        stream_consumers_[p] = std::make_unique<StreamConsumers>(is, *schema, component_task_ids);
       } else {
         stream_consumers_[p]->NewConsumer(is, *schema, component_task_ids);
       }
@@ -1029,7 +1029,7 @@ void StMgr::HandleStoreInstanceStateCheckpoint(
   }
 
   // save the checkpoint
-  auto message = make_unique<proto::ckptmgr::SaveInstanceStateRequest>();
+  auto message = std::make_unique<proto::ckptmgr::SaveInstanceStateRequest>();
   message->mutable_instance()->CopyFrom(_instance);
   message->mutable_checkpoint()->CopyFrom(_message);
   ckptmgr_client_->SaveInstanceState(std::move(message));

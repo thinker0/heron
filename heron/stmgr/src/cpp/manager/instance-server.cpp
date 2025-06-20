@@ -663,7 +663,7 @@ void InstanceServer::InitiateStatefulCheckpoint(const sp_string& _checkpoint_tag
                 << _checkpoint_tag << " to local spout "
                 << iter->second->instance_->info().component_name()
                 << " with task_id " << iter->second->instance_->info().task_id();
-      auto message = make_unique<proto::ckptmgr::InitiateStatefulCheckpoint>();
+      auto message = std::make_unique<proto::ckptmgr::InitiateStatefulCheckpoint>();
       message->set_checkpoint_id(_checkpoint_tag);
       SendMessage(iter->second->conn_, *message);
     }
@@ -727,7 +727,7 @@ bool InstanceServer::SendRestoreInstanceStateRequest(sp_int32 _task_id,
   }
   Connection* conn = instance_info_[_task_id]->conn_;
   if (conn) {
-    auto message = make_unique<proto::ckptmgr::RestoreInstanceStateRequest>();
+    auto message = std::make_unique<proto::ckptmgr::RestoreInstanceStateRequest>();
     message->mutable_state()->CopyFrom(_state);
     SendMessage(conn, *message);
     return true;
@@ -742,7 +742,7 @@ void InstanceServer::SendStartInstanceStatefulProcessing(const std::string& _ckp
   for (auto kv : instance_info_) {
     Connection* conn = kv.second->conn_;
     if (conn) {
-      auto message = make_unique<proto::ckptmgr::StartInstanceStatefulProcessing>();
+      auto message = std::make_unique<proto::ckptmgr::StartInstanceStatefulProcessing>();
       message->set_checkpoint_id(_ckpt_id);
       SendMessage(conn, *message);
     } else {

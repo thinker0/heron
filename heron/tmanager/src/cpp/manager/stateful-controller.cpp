@@ -62,8 +62,8 @@ StatefulController::StatefulController(const std::string& _topology_name,
     state_mgr_(_state_mgr),
     metrics_manager_client_(_metrics_manager_client),
     ckpt_save_watcher_(_ckpt_save_watcher) {
-  checkpointer_ = make_unique<StatefulCheckpointer>(_tmanager_start_time);
-  restorer_ = make_unique<StatefulRestorer>();
+  checkpointer_ = std::make_unique<StatefulCheckpointer>(_tmanager_start_time);
+  restorer_ = std::make_unique<StatefulRestorer>();
   count_metrics_ = make_shared<common::MultiCountMetric>();
 
   metrics_manager_client_->register_metric("__stateful_controller", count_metrics_);

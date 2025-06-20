@@ -42,9 +42,9 @@ DummyStMgr::DummyStMgr(std::shared_ptr<EventLoop> eventLoop, const NetworkOption
       pplan_(nullptr),
       got_restore_message_(false),
       got_start_message_(false) {
-  InstallResponseHandler(make_unique<proto::tmanager::StMgrRegisterRequest>(),
+  InstallResponseHandler(std::make_unique<proto::tmanager::StMgrRegisterRequest>(),
                          &DummyStMgr::HandleRegisterResponse);
-  InstallResponseHandler(make_unique<proto::tmanager::StMgrHeartbeatRequest>(),
+  InstallResponseHandler(std::make_unique<proto::tmanager::StMgrHeartbeatRequest>(),
                          &DummyStMgr::HandleHeartbeatResponse);
   InstallMessageHandler(&DummyStMgr::HandleNewAssignmentMessage);
   InstallMessageHandler(&DummyStMgr::HandleRestoreTopologyStateRequest);
@@ -144,7 +144,7 @@ void DummyStMgr::OnHeartbeatTimer() {
 }
 
 void DummyStMgr::SendRegisterRequest() {
-  auto request = make_unique<proto::tmanager::StMgrRegisterRequest>();
+  auto request = std::make_unique<proto::tmanager::StMgrRegisterRequest>();
   proto::system::StMgr* stmgr = request->mutable_stmgr();
   stmgr->set_id(my_id_);
   stmgr->set_host_name(my_host_);
@@ -159,7 +159,7 @@ void DummyStMgr::SendRegisterRequest() {
 }
 
 void DummyStMgr::SendHeartbeatRequest() {
-  auto request = make_unique<proto::tmanager::StMgrHeartbeatRequest>();
+  auto request = std::make_unique<proto::tmanager::StMgrHeartbeatRequest>();
   request->set_heartbeat_time(time(NULL));
   request->mutable_stats();
   SendRequest(std::move(request), nullptr);

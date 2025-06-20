@@ -53,11 +53,11 @@ CkptMgrClient::CkptMgrClient(std::shared_ptr<EventLoop> eventloop, const Network
   // TODO(nlu): take the value from config
   reconnect_cpktmgr_interval_sec_ = 10;
 
-  InstallResponseHandler(make_unique<proto::ckptmgr::RegisterStMgrRequest>(),
+  InstallResponseHandler(std::make_unique<proto::ckptmgr::RegisterStMgrRequest>(),
                          &CkptMgrClient::HandleRegisterStMgrResponse);
-  InstallResponseHandler(make_unique<proto::ckptmgr::SaveInstanceStateRequest>(),
+  InstallResponseHandler(std::make_unique<proto::ckptmgr::SaveInstanceStateRequest>(),
                          &CkptMgrClient::HandleSaveInstanceStateResponse);
-  InstallResponseHandler(make_unique<proto::ckptmgr::GetInstanceStateRequest>(),
+  InstallResponseHandler(std::make_unique<proto::ckptmgr::GetInstanceStateRequest>(),
                          &CkptMgrClient::HandleGetInstanceStateResponse);
 }
 
@@ -145,7 +145,7 @@ void CkptMgrClient::HandleRegisterStMgrResponse(
 void CkptMgrClient::OnReconnectTimer() { Start(); }
 
 void CkptMgrClient::SendRegisterRequest() {
-  auto request = make_unique<proto::ckptmgr::RegisterStMgrRequest>();
+  auto request = std::make_unique<proto::ckptmgr::RegisterStMgrRequest>();
   request->set_topology_name(topology_name_);
   request->set_topology_id(topology_id_);
   request->set_stmgr_id(stmgr_id_);
@@ -174,7 +174,7 @@ void CkptMgrClient::GetInstanceState(const proto::system::Instance& _instance,
 void CkptMgrClient::GetInstanceState(const proto::system::Instance& _instance,
                                      const std::string& _checkpoint_id,
                                      int32_t* _nattempts) {
-  auto request = make_unique<proto::ckptmgr::GetInstanceStateRequest>();
+  auto request = std::make_unique<proto::ckptmgr::GetInstanceStateRequest>();
   request->mutable_instance()->CopyFrom(_instance);
   request->set_checkpoint_id(_checkpoint_id);
   SendRequest(std::move(request), _nattempts);

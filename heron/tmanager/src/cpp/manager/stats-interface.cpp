@@ -35,7 +35,7 @@ namespace tmanager {
 StatsInterface::StatsInterface(std::shared_ptr<EventLoop> eventLoop, const NetworkOptions& _options,
                                shared_ptr<TMetricsCollector> _collector, TManager* _tmanager)
     : metrics_collector_(_collector), tmanager_(_tmanager) {
-  http_server_ = make_unique<HTTPServer>(eventLoop, _options);
+  http_server_ = std::make_unique<HTTPServer>(eventLoop, _options);
   // Install the handlers
   auto cbHandleStats = [this](IncomingHTTPRequest* request) { this->HandleStatsRequest(request); };
 
@@ -80,7 +80,7 @@ void StatsInterface::HandleStatsRequest(IncomingHTTPRequest* _request) {
   auto res = metrics_collector_->GetMetrics(req, tmanager_->getInitialTopology());
   sp_string response_string;
   CHECK(res->SerializeToString(&response_string));
-  auto response = make_unique<OutgoingHTTPResponse>(_request);
+  auto response = std::make_unique<OutgoingHTTPResponse>(_request);
   response->AddHeader("Content-Type", "application/octet-stream");
   response->AddHeader("Content-Length", std::to_string(response_string.size()));
   response->AddResponse(response_string);
@@ -104,7 +104,7 @@ void StatsInterface::HandleExceptionRequest(IncomingHTTPRequest* _request) {
       metrics_collector_->GetExceptions(exception_request);
   sp_string response_string;
   CHECK(exception_response->SerializeToString(&response_string));
-  auto http_response = make_unique<OutgoingHTTPResponse>(_request);
+  auto http_response = std::make_unique<OutgoingHTTPResponse>(_request);
   http_response->AddHeader("Content-Type", "application/octet-stream");
   http_response->AddHeader("Content-Length", std::to_string(response_string.size()));
   http_response->AddResponse(response_string);
@@ -126,7 +126,7 @@ void StatsInterface::HandleExceptionSummaryRequest(IncomingHTTPRequest* _request
   auto exception_response = metrics_collector_->GetExceptionsSummary(exception_request);
   sp_string response_string;
   CHECK(exception_response->SerializeToString(&response_string));
-  auto http_response = make_unique<OutgoingHTTPResponse>(_request);
+  auto http_response = std::make_unique<OutgoingHTTPResponse>(_request);
   http_response->AddHeader("Content-Type", "application/octet-stream");
   http_response->AddHeader("Content-Length", std::to_string(response_string.size()));
   http_response->AddResponse(response_string);
@@ -150,7 +150,7 @@ void StatsInterface::HandleStmgrsRegistrationSummaryRequest(IncomingHTTPRequest*
   auto stmgrs_reg_summary_response = tmanager_->GetStmgrsRegSummary();
   sp_string response_string;
   CHECK(stmgrs_reg_summary_response->SerializeToString(&response_string));
-  auto http_response = make_unique<OutgoingHTTPResponse>(_request);
+  auto http_response = std::make_unique<OutgoingHTTPResponse>(_request);
   http_response->AddHeader("Content-Type", "application/octet-stream");
   http_response->AddHeader("Content-Length", std::to_string(response_string.size()));
   http_response->AddResponse(response_string);

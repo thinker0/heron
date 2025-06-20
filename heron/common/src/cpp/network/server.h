@@ -152,7 +152,7 @@ class Server : public BaseServer {
   // Register a handler for a particular request type
   template <typename T, typename M>
   void InstallRequestHandler(void (T::*method)(REQID id, Connection* conn, pool_unique_ptr<M>)) {
-    unique_ptr<google::protobuf::Message> m = make_unique<M>();
+    unique_ptr<google::protobuf::Message> m = std::make_unique<M>();
     T* t = static_cast<T*>(this);
     requestHandlers[m->GetTypeName()] = std::bind(&Server::dispatchRequest<T, M>, this, t, method,
                                                   std::placeholders::_1, std::placeholders::_2);
@@ -161,7 +161,7 @@ class Server : public BaseServer {
   // Register a handler for a particular message type
   template <typename T, typename M>
   void InstallMessageHandler(void (T::*method)(Connection* conn, pool_unique_ptr<M>)) {
-    unique_ptr<google::protobuf::Message> m = make_unique<M>();
+    unique_ptr<google::protobuf::Message> m = std::make_unique<M>();
     T* t = static_cast<T*>(this);
     messageHandlers[m->GetTypeName()] = std::bind(&Server::dispatchMessage<T, M>, this, t, method,
                                                   std::placeholders::_1, std::placeholders::_2);

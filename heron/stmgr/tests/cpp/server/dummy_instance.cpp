@@ -44,7 +44,7 @@ DummyInstance::DummyInstance(std::shared_ptr<EventLoopImpl> eventLoop,
       stmgr_id_(_stmgr_id),
       recvd_stmgr_pplan_(NULL),
       register_response_status(heron::proto::system::STMGR_DIDNT_REGISTER) {
-  InstallResponseHandler(make_unique<heron::proto::stmgr::RegisterInstanceRequest>(),
+  InstallResponseHandler(std::make_unique<heron::proto::stmgr::RegisterInstanceRequest>(),
                          &DummyInstance::HandleInstanceResponse);
   InstallMessageHandler(&DummyInstance::HandleTupleMessage);
   InstallMessageHandler(&DummyInstance::HandleNewInstanceAssignmentMsg);
@@ -98,7 +98,7 @@ void DummyInstance::HandleNewInstanceAssignmentMsg(
         pool_unique_ptr<heron::proto::stmgr::NewInstanceAssignmentMessage>) {}
 
 void DummyInstance::CreateAndSendInstanceRequest() {
-  auto request = make_unique<heron::proto::stmgr::RegisterInstanceRequest>();
+  auto request = std::make_unique<heron::proto::stmgr::RegisterInstanceRequest>();
   heron::proto::system::Instance* instance = request->mutable_instance();
   instance->set_instance_id(instance_id_);
   instance->set_stmgr_id(stmgr_id_);

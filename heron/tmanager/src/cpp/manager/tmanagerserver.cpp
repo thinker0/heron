@@ -69,14 +69,14 @@ void TManagerServer::HandleConnectionClose(Connection* _conn, NetworkErrorCode) 
 void TManagerServer::HandleStMgrRegisterRequest(REQID _reqid, Connection* _conn,
                                    pool_unique_ptr<proto::tmanager::StMgrRegisterRequest> _request) {
   unique_ptr<StMgrRegisterProcessor> processor =
-      make_unique<StMgrRegisterProcessor>(_reqid, _conn, std::move(_request), tmanager_, this);
+      std::make_unique<StMgrRegisterProcessor>(_reqid, _conn, std::move(_request), tmanager_, this);
   processor->Start();
 }
 
 void TManagerServer::HandleStMgrHeartbeatRequest(REQID _reqid, Connection* _conn,
                                   pool_unique_ptr<proto::tmanager::StMgrHeartbeatRequest> _request) {
   unique_ptr<StMgrHeartbeatProcessor> processor =
-      make_unique<StMgrHeartbeatProcessor>(_reqid, _conn, std::move(_request), tmanager_, this);
+      std::make_unique<StMgrHeartbeatProcessor>(_reqid, _conn, std::move(_request), tmanager_, this);
   processor->Start();
 }
 

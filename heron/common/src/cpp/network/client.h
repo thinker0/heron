@@ -134,7 +134,7 @@ class Client : public BaseClient {
   void InstallResponseHandler(unique_ptr<S> _request,
                               void (T::*method)(void* _ctx, pool_unique_ptr<M>,
                               NetworkErrorCode status)) {
-    auto m = make_unique<M>();
+    auto m = std::make_unique<M>();
     T* t = static_cast<T*>(this);
     responseHandlers[m->GetTypeName()] = std::bind(&Client::dispatchResponse<T, M>, this, t, method,
                                                    std::placeholders::_1, std::placeholders::_2);

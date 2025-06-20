@@ -39,7 +39,7 @@ DummyTManagerClient::DummyTManagerClient(
       stmgr_port_(stmgr_port),
       shell_port_(shell_port),
       instances_(_instances) {
-  InstallResponseHandler(make_unique<heron::proto::tmanager::StMgrRegisterRequest>(),
+  InstallResponseHandler(std::make_unique<heron::proto::tmanager::StMgrRegisterRequest>(),
                          &DummyTManagerClient::HandleRegisterResponse);
   // Setup the call back function to be invoked when retrying
   retry_cb_ = [this]() { this->Retry(); };
@@ -65,7 +65,7 @@ void DummyTManagerClient::HandleConnect(NetworkErrorCode _status) {
 void DummyTManagerClient::HandleClose(NetworkErrorCode) {}
 
 void DummyTManagerClient::CreateAndSendRegisterRequest() {
-  auto request = make_unique<heron::proto::tmanager::StMgrRegisterRequest>();
+  auto request = std::make_unique<heron::proto::tmanager::StMgrRegisterRequest>();
   heron::proto::system::StMgr* stmgr = request->mutable_stmgr();
   sp_string cwd;
   stmgr->set_id(stmgr_id_);

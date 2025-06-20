@@ -139,7 +139,7 @@ std::string GenerateStMgrId(int32_t _index) {
 unique_ptr<heron::proto::system::Instance> CreateInstance(int32_t _comp, int32_t _comp_instance,
                                                           int32_t _stmgr_id,
                                                           int32_t _global_index, bool _is_spout) {
-  auto imap = make_unique<heron::proto::system::Instance>();
+  auto imap = std::make_unique<heron::proto::system::Instance>();
   imap->set_instance_id(CreateInstanceId(_global_index));
   imap->set_stmgr_id(GenerateStMgrId(_stmgr_id));
   heron::proto::system::InstanceInfo* inst = imap->mutable_info();

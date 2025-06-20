@@ -40,9 +40,9 @@ CkptMgrClient::CkptMgrClient(std::shared_ptr<EventLoop> eventLoop, const Network
 
 
 
-    InstallResponseHandler(make_unique<proto::ckptmgr::RegisterTManagerRequest>(),
+    InstallResponseHandler(std::make_unique<proto::ckptmgr::RegisterTManagerRequest>(),
                            &CkptMgrClient::HandleTManagerRegisterResponse);
-    InstallResponseHandler(make_unique<proto::ckptmgr::CleanStatefulCheckpointRequest>(),
+    InstallResponseHandler(std::make_unique<proto::ckptmgr::CleanStatefulCheckpointRequest>(),
                            &CkptMgrClient::HandleCleanStatefulCheckpointResponse);
 }
 
@@ -128,7 +128,7 @@ void CkptMgrClient::OnReconnectTimer() { Start(); }
 
 void CkptMgrClient::SendRegisterRequest() {
   LOG(INFO) << "Sending RegisterTmanagerRequest to ckptmgr" << std::endl;
-  auto request = make_unique<proto::ckptmgr::RegisterTManagerRequest>();
+  auto request = std::make_unique<proto::ckptmgr::RegisterTManagerRequest>();
   request->set_topology_name(topology_name_);
   request->set_topology_id(topology_id_);
   SendRequest(std::move(request), nullptr);
@@ -138,7 +138,7 @@ void CkptMgrClient::SendCleanStatefulCheckpointRequest(const std::string& _oldes
                                                        bool _clean_all) {
   LOG(INFO) << "Sending CleanStatefulCheckpoint request to ckptmgr with oldest checkpoint "
             << _oldest_ckpt << " and clean_all " << _clean_all << std::endl;
-  auto request = make_unique<proto::ckptmgr::CleanStatefulCheckpointRequest>();
+  auto request = std::make_unique<proto::ckptmgr::CleanStatefulCheckpointRequest>();
   request->set_oldest_checkpoint_preserved(_oldest_ckpt);
   request->set_clean_all_checkpoints(_clean_all);
   SendRequest(std::move(request), nullptr);
