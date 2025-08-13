@@ -195,7 +195,8 @@ def _pex_binary_impl(ctx):
         "--output-file",
         deploy_pex.path,
         "--disable-cache",
-        "--python-shebang", "#!/usr/bin/env python3.9",
+        "--python-shebang",
+        ctx.attr.python_shebang,
         "--no-compile",
         "--include-tools",
         "--layout zipapp",
@@ -324,6 +325,7 @@ pex_bin_attrs = _dmerge(pex_attrs, {
     "entrypoint": attr.string(),
     "interpreter": attr.string(),
     "platforms": attr.string_list(),
+    "python_shebang": attr.string(default = "#!/usr/bin/env python3.9"),
     "pex_use_wheels": attr.bool(default = True),
     "pex_verbosity": attr.int(default = 0),
     "resources": attr.label_list(allow_files = True),
@@ -387,6 +389,8 @@ Args:
     It is an error to specify both main and entrypoint.
 
   interpreter: Path to the python interpreter the pex should to use in its shebang line.
+
+  python_shebang: The full shebang line to embed in the pex file.
 """
 
 pex_test = rule(
