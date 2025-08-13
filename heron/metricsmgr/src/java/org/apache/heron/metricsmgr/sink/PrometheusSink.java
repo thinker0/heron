@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +40,7 @@ import org.apache.heron.spi.metricsmgr.metrics.MetricsRecord;
 import org.apache.heron.spi.metricsmgr.sink.SinkContext;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.joining;
 import static org.apache.heron.metricsmgr.sink.PrometheusSink.Prometheus.sanitizeMetricName;
 
 /**
@@ -201,96 +201,22 @@ public class PrometheusSink extends AbstractWebSink {
       }
 
       sourceMetrics.forEach((String metric, Double value) -> {
-        final Map<String, String> labelKV = new TreeMap<>(baseLabels);
-        // some stream manager metrics in heron contain a instance id as part of the metric name
-        // this should be a label when exported to prometheus.
-        // Example: __connection_buffer_by_instanceid/container_1_word_5/packets or
-        // __time_spent_back_pressure_by_compid/container_1_exclaim1_1
-        // TODO convert to small classes for less string manipulation
-        AtomicReference<String> metricName = new AtomicReference<>();
-        if (componentIsStreamManger) {
-          final boolean metricHasInstanceId = metric.contains("_by_");
-          final String[] metricParts = metric.split("/");
-          if (metricHasInstanceId && metricParts.length == 3) {
-            metricName.set(splitTargetInstance(metricParts[0], metricParts[2], labelKV));
-            labelKV.put("metric_instance_id", metricParts[1]);
-          } else if (metricHasInstanceId && metricParts.length == 2) {
-            metricName.set(splitTargetInstance(metricParts[0], null, labelKV));
-            labelKV.put("metric_instance_id", metricParts[1]);
-          } else if (metricParts.length == 2) {
-            metricName.set(splitTargetInstance(metricParts[0], metricParts[1], labelKV));
-          } else {
-            metricName.set(splitTargetInstance(metric, null, labelKV));
-          }
-        } if (isPrometheusMetrics(metric)) {
-          PROME_PATTERN.matcher(metric).results()
-              .forEach(matchResult -> {
-                metricName.set(matchResult.group(2));
-                String labels = matchResult.group(3);
-                PROME_LABELS.matcher(labels).results()
-                            .forEach(labelResult -> labelKV.put(labelResult.group(1),
-                                                                labelResult.group(2)));
-              });
-        } else {
-          final AtomicReference<String> name = new AtomicReference<>(sanitizeMetricName(metric));
-          for (Rule rule : rules) {
-            String ruleName = name.get();
-            Matcher matcher = null;
-            if (rule.pattern != null) {
-              matcher = rule.pattern.matcher(metric);
-              if (!matcher.matches()) {
-                continue;
-              }
-            }
-
-            // If there's no name provided, use default export format.
-            if (rule.name == null || rule.name.isEmpty()) {
-              // nothing
-            } else {
-              // Matcher is set below here due to validation in the constructor.
-              ruleName = sanitizeMetricName(matcher.replaceAll(rule.name));
-              if (ruleName.isEmpty()) {
-                continue;
-              }
-            }
-            if (rule.attrNameSnakeCase) {
-              name.set(toSnakeAndLowerCase(ruleName));
-            } else {
-              name.set(ruleName.toLowerCase());
-            }
-            if (rule.labelNames != null) {
-              for (int i = 0; i < rule.labelNames.size(); i++) {
-                final String unsafeLabelName = rule.labelNames.get(i);
-                final String labelValReplacement = rule.labelValues.get(i);
-                String labelName = sanitizeMetricName(matcher.replaceAll(unsafeLabelName));
-                String labelValue = matcher.replaceAll(labelValReplacement);
-                labelName = labelName.toLowerCase();
-                if (!labelName.isEmpty() && !labelValue.isEmpty()) {
-                  labelKV.put(labelName, labelValue);
-                }
-              }
-            }
-            break;
-          }
-          metricName.set(name.get());
-        }
+        ParsedMetric parsedMetric = parseMetric(metric, componentIsStreamManger, baseLabels);
+        final Map<String, String> labelKV = parsedMetric.labels;
+        final String metricName = parsedMetric.name;
 
         // TODO Type, Help
         String exportedMetricName = format("%s_%s", HERON_PREFIX,
-                                           metricName.get()
+                                           metricName
                                                      .replace("__", "")
                                                      .toLowerCase());
-        sb.append(sanitizeMetricName(exportedMetricName))
-            .append("{");
-        final AtomicBoolean isFirst = new AtomicBoolean(true);
-        labelKV.forEach((k, v) -> {
-          // Add labels
-          if (!isFirst.get()) {
-            sb.append(',');
-          }
-          sb.append(format("%s=\"%s\"", k, v));
-          isFirst.set(false);
-        });
+        String cleanMetricName = exportedMetricName.replaceAll("heron_heron_", "heron_");
+
+        sb.append(sanitizeMetricName(cleanMetricName)).append("{");
+        String labels = labelKV.entrySet().stream()
+            .map(entry -> format("%s=\"%s\"", entry.getKey(), entry.getValue()))
+            .collect(joining(","));
+        sb.append(labels);
         sb.append("} ")
             .append(Prometheus.doubleToGoString(value))
             .append(" ").append(currentTimeMillis())
@@ -301,15 +227,122 @@ public class PrometheusSink extends AbstractWebSink {
     return sb.toString().getBytes();
   }
 
+  private ParsedMetric parseMetric(String metricName, boolean isStreamManager, Map<String, String> baseLabels) {
+    final Map<String, String> labels = new TreeMap<>(baseLabels);
+    final String finalMetricName;
+
+    if (isStreamManager) {
+      final boolean metricHasInstanceId = metricName.contains("_by_");
+      final String[] metricParts = metricName.split("/");
+      // e.g. __connection_buffer_by_instanceid/container_1_word_5/packets
+      if (metricHasInstanceId && metricParts.length == 3) {
+        finalMetricName = splitTargetInstance(metricParts[0], metricParts[2], labels);
+        labels.put("metric_instance_id", metricParts[1]);
+      // e.g. __server_connection_buffer_by_instanceid/container_1_word_5
+      } else if (metricHasInstanceId && metricParts.length == 2) {
+        finalMetricName = splitTargetInstance(metricParts[0], null, labels);
+        labels.put("metric_instance_id", metricParts[1]);
+      // e.g. __ack-count/default
+      } else if (metricParts.length == 2) {
+        finalMetricName = splitTargetInstance(metricParts[0], metricParts[1], labels);
+      } else {
+        // e.g. __pending-bytes
+        finalMetricName = splitTargetInstance(metricName, null, labels);
+      }
+    } else if (isPrometheusMetrics(metricName)) {
+      // This logic assumes a format like "heron_component_id/metric_name{labels...}"
+      final String[] metricParts = metricName.split("/", 2);
+      if (metricParts.length != 2) {
+        // The metric name is not in the expected "component/metric" format.
+        LOG.log(Level.WARNING, "Prometheus-formatted metric ''{0}'' is not in the expected "
+            + "'component/metric' format. Parsing as a simple metric name.", metricName);
+        finalMetricName = sanitizeMetricName(metricName);
+        return new ParsedMetric(finalMetricName, labels);
+      }
+
+      labels.put("component_id", metricParts[0]);
+      Matcher promeMatcher = PROME_PATTERN.matcher(metricParts[1]);
+      if (promeMatcher.matches()) {
+        finalMetricName = promeMatcher.group("name");
+        String labelsStr = promeMatcher.group("labels");
+
+        Matcher labelMatcher = PROME_LABELS.matcher(labelsStr);
+        while (labelMatcher.find()) {
+          String key = labelMatcher.group("key");
+          String value = labelMatcher.group("value");
+          if (!labels.containsKey(key)) {
+            labels.put(key, value);
+          } else {
+            LOG.log(Level.FINE, "Skipping label ''{0}'' from metric ''{1}'' "
+                + "because it conflicts with an existing label.", new Object[]{key, metricName});
+          }
+        }
+      } else {
+        finalMetricName = sanitizeMetricName(metricName);
+      }
+    } else {
+      final AtomicReference<String> name = new AtomicReference<>(sanitizeMetricName(metricName));
+      for (Rule rule : rules) {
+        String ruleName = name.get();
+        Matcher matcher = null;
+        if (rule.pattern != null) {
+          matcher = rule.pattern.matcher(metricName);
+          if (!matcher.matches()) {
+            continue;
+          }
+        }
+
+        // If there's no name provided, use default export format.
+        if (rule.name == null || rule.name.isEmpty()) {
+          // nothing
+        } else {
+          // Matcher is set below here due to validation in the constructor.
+          assert matcher != null;
+          ruleName = sanitizeMetricName(matcher.replaceAll(rule.name));
+          if (ruleName.isEmpty()) {
+            continue;
+          }
+        }
+        if (rule.attrNameSnakeCase) {
+          name.set(toSnakeAndLowerCase(ruleName));
+        } else {
+          name.set(ruleName.toLowerCase());
+        }
+        if (rule.labelNames != null) {
+          for (int i = 0; i < rule.labelNames.size(); i++) {
+            final String unsafeLabelName = rule.labelNames.get(i);
+            final String labelValReplacement = rule.labelValues.get(i);
+            assert matcher != null;
+            String labelName = sanitizeMetricName(matcher.replaceAll(unsafeLabelName));
+            String labelValue = matcher.replaceAll(labelValReplacement);
+            labelName = labelName.toLowerCase();
+            if (!labelName.isEmpty() && !labelValue.isEmpty()) {
+              if (!labels.containsKey(labelName)) {
+                labels.put(labelName, labelValue);
+              } else {
+                LOG.log(Level.FINE, "Skipping label ''{0}'' from rule for metric ''{1}'' "
+                    + "because it conflicts with an existing label.", new Object[]{labelName, metricName});
+              }
+            }
+          }
+        }
+        break;
+      }
+      finalMetricName = name.get();
+    }
+    return new ParsedMetric(finalMetricName, labels);
+  }
+
   private boolean isPrometheusMetrics(String metric) {
       return metric.endsWith("}") && metric.contains("{");
   }
 
-  private static final Pattern PROME_PATTERN = Pattern.compile("(\\w+/)?([a-zA-Z_:][a-zA-Z0-9_:]*)\\{(?<labels>.*)}$");
-  private static final Pattern PROME_LABELS = Pattern.compile("(?<key>[a-zA-Z_][a-zA-Z0-9_]*)=\"(?<value>.+)?\",?");
-  private static final Pattern SPLIT_TARGET = Pattern.compile("__(?<name>\\w+)"
+  static final Pattern PROME_PATTERN = Pattern.compile("(?<name>[a-zA-Z0-9_:]+)\\{(?<labels>.*)}$");
+  static final Pattern PROME_LABELS = Pattern.compile(
+      "(?<key>[a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*\"(?<value>(?:[^\"]|\\\\.)*)\"");
+  static final Pattern SPLIT_TARGET = Pattern.compile("__(?<name>\\w+)"
       + "_(?<target>(?<instance>\\w+)-\\d+)");
-  private static final Pattern DIGIT = Pattern.compile("[0-9]+");
+  static final Pattern DIGIT = Pattern.compile("[0-9]+");
 
   private String splitTargetInstance(String part1, String part2, Map<String, String> labelKV) {
     if (part2 != null) {
@@ -407,6 +440,16 @@ public class PrometheusSink extends AbstractWebSink {
     }
 
     return map;
+  }
+
+  private static class ParsedMetric {
+    final String name;
+    final Map<String, String> labels;
+
+    ParsedMetric(String name, Map<String, String> labels) {
+      this.name = name;
+      this.labels = labels;
+    }
   }
 
   // code taken from prometheus java_client repo
