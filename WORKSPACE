@@ -78,7 +78,7 @@ maven_install(
         "org.slf4j:jcl-over-slf4j:%s" % slf4j_version,
         "ch.qos.logback:logback-classic:%s" % logback_verison,
         "antlr:antlr:2.7.7",
-        "org.apache.zookeeper:zookeeper:3.8.3",
+        "org.apache.zookeeper:zookeeper:3.8.4",
         "io.kubernetes:client-java:" + kubernetes_client_version,
         "io.kubernetes:client-java-api-fluent:" + kubernetes_client_version,
         "com.esotericsoftware:kryo:5.4.0",
@@ -322,7 +322,7 @@ http_archive(
     patches = ["//third_party/zookeeper:zookeeper_jute.patch"],
     sha256 = "b15bf5b4e4977d04447be0c53743c57df985b6f6786c067b12821a8d79922294",
     strip_prefix = "apache-zookeeper-3.8.4",
-    urls = ["https://dlcdn.apache.org/zookeeper/zookeeper-3.8.4/apache-zookeeper-3.8.4.tar.gz"],
+    urls = ["https://archive.apache.org/dist/zookeeper/zookeeper-3.8.4/apache-zookeeper-3.8.4.tar.gz"],
 )
 
 http_archive(
