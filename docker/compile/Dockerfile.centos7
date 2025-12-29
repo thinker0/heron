@@ -21,17 +21,11 @@ FROM centos:centos7
 ENV TARGET_PLATFORM=linux
 
 # CentOS 7.9.2009(EOL) is the latest version available in the vault
-RUN mkdir -p /var/cache/yum/x86_64/7/base/ \
-      /var/cache/yum/x86_64/7/extras/ \
-      /var/cache/yum/x86_64/7/updates/ \
-      /var/cache/yum/x86_64/7/centos-sclo-rh/ \
-      /var/cache/yum/x86_64/7/centos-sclo-sclo/
+RUN sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo
 
-RUN echo "https://vault.centos.org/7.9.2009/os/x86_64/" > /var/cache/yum/x86_64/7/base/mirrorlist.txt \
-      && echo "https://vault.centos.org/7.9.2009/extras/x86_64/" > /var/cache/yum/x86_64/7/extras/mirrorlist.txt \
-      && echo "https://vault.centos.org/7.9.2009/updates/x86_64/" > /var/cache/yum/x86_64/7/updates/mirrorlist.txt \
-      && echo "http://vault.centos.org/7.9.2009/sclo/x86_64/rh/" > /var/cache/yum/x86_64/7/centos-sclo-rh/mirrorlist.txt \
-      && echo "http://vault.centos.org/7.9.2009/sclo/x86_64/sclo/" > /var/cache/yum/x86_64/7/centos-sclo-sclo/mirrorlist.txt
+RUN yum -y upgrade --exclude 'kernel*' \
+    && yum -y install centos-release-scl-rh \
+    && sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS-SCLo*.repo
 
 RUN yum -y install \
       ant \
