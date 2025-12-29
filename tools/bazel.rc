@@ -24,6 +24,11 @@ build --workspace_status_command scripts/release/status.sh
 build --strategy=Scalac=worker
 build --worker_sandboxing
 
+build --java_language_version=11
+build --tool_java_language_version=11
+build --java_runtime_version=remotejdk_11
+build --javacopt="-Xlint:-options"
+
 # To enable stylecheck
 # To use it: bazel build --config=stylecheck
 build:stylecheck --experimental_action_listener=tools/cpp:compile_cpp
