@@ -107,7 +107,7 @@ def proto_library(
             srcs = [name + "_java_src"],
             deps = java_deps,
             visibility = visibility,
-            javacopts = ["-Xlint:-cast", "-Xlint:-static", "-Xlint:-deprecation"],
+            javacopts = ["-Xlint:-cast", "-Xlint:-static", "-Xlint:-deprecation", "-Xlint:-options"],
         )
 
     if not includes:

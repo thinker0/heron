@@ -17,6 +17,6 @@
 
 """This file defines constants for the javadoc build"""
 
-DOCLINT_HTML_AND_SYNTAX = ["-Xdoclint:none"]
+DOCLINT_HTML_AND_SYNTAX = ["-Xdoclint:none", "-Xlint:-options"]
 
 DOCLINT_REFERENCES = ["-Xdoclint:none"]

@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-load("@rules_java//java:defs.bzl", "java_library")
 load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_java//java:defs.bzl", "java_library")
 load("pex_rules", "pex_library")
 
 standard_proto_path = "heron/proto"
@@ -158,6 +158,7 @@ def proto_library(
             srcs = [proto_pkg.label()],
             deps = java_deps,
             visibility = visibility,
+            javacopts = ["-Xlint:-cast", "-Xlint:-static", "-Xlint:-deprecation", "-Xlint:-options"],
         )
 
     if gen_cc:
