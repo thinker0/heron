@@ -18,8 +18,8 @@
 #syntax=docker/dockerfile:1.2
 FROM openjdk:11-jdk-slim-bullseye
 
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 RUN apt-get update \
     && apt-get -y install \
@@ -47,7 +47,7 @@ RUN ln -s /usr/local/heron/dist/heron-core /heron \
     && ln -s /usr/local/heron/examples /heron \
     && ln -s /usr/local/heron/release.yaml /heron
 
-ENV HERON_HOME /heron/heron-core/
+ENV HERON_HOME=/heron/heron-core/
 RUN export HERON_HOME
 
 # install Zookeeper

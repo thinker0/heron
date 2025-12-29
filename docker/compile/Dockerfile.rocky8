@@ -17,7 +17,7 @@
 
 FROM rockylinux:8.9
 
-RUN yum -y upgrade \
+RUN yum -y upgrade --exclude 'kernel*' \
    && yum -y install \
       ant \
       automake \
@@ -46,19 +46,19 @@ RUN yum -y upgrade \
 
 RUN update-alternatives --set python /usr/bin/python3.9
 
-ENV LC_ALL en_US.utf8
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk
+ENV LC_ALL=en_US.utf8
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 
-ENV bazelVersion 7.6.1
+ENV bazelVersion=7.6.1
 
 RUN wget -O /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/$bazelVersion/bazel-$bazelVersion-installer-linux-x86_64.sh \
       && chmod +x /tmp/bazel.sh \
       && /tmp/bazel.sh \
       && rm -rf /tmp/bazel.sh
 
-ENV PATH /opt/rh/gcc-toolset-14/root/usr/bin:${PATH}
-ENV LD_LIBRARY_PATH /opt/rh/gcc-toolset-14/root/lib64
-ENV MANPATH /opt/rh/gcc-toolset-14/root/usr/share/man
+ENV PATH=/opt/rh/gcc-toolset-14/root/usr/bin:${PATH}
+ENV LD_LIBRARY_PATH=/opt/rh/gcc-toolset-14/root/lib64
+ENV MANPATH=/opt/rh/gcc-toolset-14/root/usr/share/man
 
 RUN /usr/bin/ln -sfT /opt/rh/gcc-toolset-14/root/usr/bin/gcc /usr/bin/gcc \
       && /usr/bin/ln -sfT /opt/rh/gcc-toolset-14/root/usr/bin/g++ /usr/bin/g++ \

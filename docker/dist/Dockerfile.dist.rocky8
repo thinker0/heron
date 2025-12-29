@@ -18,7 +18,7 @@
 #syntax=docker/dockerfile:1.2
 FROM rockylinux:8.9
 
-RUN yum -y upgrade \
+RUN yum -y upgrade --exclude 'kernel*' \
     && yum -y install epel-release \
     && yum -y install \
     curl \
@@ -34,8 +34,8 @@ RUN yum -y upgrade \
 
 RUN update-alternatives --set python /usr/bin/python3.9
 
-ENV LC_ALL en_US.utf8
-ENV JAVA_HOME /usr/
+ENV LC_ALL=en_US.utf8
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 
 # run Heron installer
 RUN --mount=type=bind,source=artifacts,target=/tmp/heron /tmp/heron/heron-install.sh \
@@ -53,7 +53,7 @@ RUN ln -s /usr/local/heron/dist/heron-core /heron \
     && ln -s /usr/local/heron/examples /heron \
     && ln -s /usr/local/heron/release.yaml /heron
 
-ENV HERON_HOME /heron/heron-core/
+ENV HERON_HOME=/heron/heron-core/
 RUN export HERON_HOME
 
 # install Zookeeper

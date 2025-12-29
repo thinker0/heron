@@ -20,8 +20,8 @@ FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 # Docker 20.10.10 or older will not work
 RUN apt-get -y update \
@@ -35,7 +35,7 @@ RUN apt-get -y update \
     unzip \
     && apt-get clean
 
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 RUN update-ca-certificates -f
 
 # run Heron installer
@@ -54,7 +54,7 @@ RUN ln -s /usr/local/heron/dist/heron-core /heron \
     && ln -s /usr/local/heron/examples /heron \
     && ln -s /usr/local/heron/release.yaml /heron
 
-ENV HERON_HOME /heron/heron-core/
+ENV HERON_HOME=/heron/heron-core/
 RUN export HERON_HOME
 
 # install Zookeeper

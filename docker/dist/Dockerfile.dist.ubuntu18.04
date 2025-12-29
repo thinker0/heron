@@ -17,8 +17,8 @@
 
 FROM ubuntu:18.04
 
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 RUN apt-get -y update \
     && apt-get -y install \
@@ -34,7 +34,7 @@ RUN apt-get -y update \
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 10
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 10
 
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 RUN update-ca-certificates -f
 
 # run Heron installer
@@ -53,7 +53,7 @@ RUN ln -s /usr/local/heron/dist/heron-core /heron \
     && ln -s /usr/local/heron/examples /heron \
     && ln -s /usr/local/heron/release.yaml /heron
 
-ENV HERON_HOME /heron/heron-core/
+ENV HERON_HOME=/heron/heron-core/
 RUN export HERON_HOME
 
 # install Zookeeper

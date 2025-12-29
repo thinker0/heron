@@ -19,8 +19,8 @@ FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 RUN apt-get update && apt-get -y install \
       ant \
@@ -42,9 +42,9 @@ RUN apt-get update && apt-get -y install \
       tree \
       openjdk-11-jdk-headless
 
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 
-ENV bazelVersion 7.6.1
+ENV bazelVersion=7.6.1
 
 RUN wget -O /tmp/bazel.sh https://github.com/bazelbuild/bazel/releases/download/$bazelVersion/bazel-$bazelVersion-installer-linux-x86_64.sh \
       && chmod +x /tmp/bazel.sh \
