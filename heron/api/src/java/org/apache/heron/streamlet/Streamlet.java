@@ -265,13 +265,13 @@ public interface Streamlet<R> extends StreamletBase<R> {
   Streamlet<R> split(Map<String, SerializablePredicate<R>> splitFns);
 
   /**
-   * Return a new KVStreamlet<K, R> by applying key extractor to each element of this Streamlet
+   * Return a new KVStreamlet&lt;K, R&gt; by applying key extractor to each element of this Streamlet
    * @param keyExtractor The function applied to a tuple of this streamlet to get the key
    */
   <K> KVStreamlet<K, R> keyBy(SerializableFunction<R, K> keyExtractor);
 
   /**
-   * Return a new KVStreamlet<K, V> by applying key and value extractor to each element of this
+   * Return a new KVStreamlet&lt;K, V&gt; by applying key and value extractor to each element of this
    * Streamlet
    * @param keyExtractor The function applied to a tuple of this streamlet to get the key
    * @param valueExtractor The function applied to a tuple of this streamlet to extract the value
@@ -280,13 +280,13 @@ public interface Streamlet<R> extends StreamletBase<R> {
                                  SerializableFunction<R, V> valueExtractor);
 
   /**
-   * Returns a new stream of <key, count> by counting tuples in this stream on each key.
+   * Returns a new stream of &lt;key, count&gt; by counting tuples in this stream on each key.
    * @param keyExtractor The function applied to a tuple of this streamlet to get the key
    */
   <K> KVStreamlet<K, Long> countByKey(SerializableFunction<R, K> keyExtractor);
 
   /**
-   * Returns a new stream of <key, count> by counting tuples over a window in this stream on each key.
+   * Returns a new stream of &lt;key, count&gt; by counting tuples over a window in this stream on each key.
    * @param keyExtractor The function applied to a tuple of this streamlet to get the key
    * @param windowCfg This is a specification of what kind of windowing strategy you like to have.
    * Typical windowing strategies are sliding windows and tumbling windows

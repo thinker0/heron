@@ -88,7 +88,7 @@ public class WindowManager<T extends Serializable> implements TriggerHandler {
 
   /**
    * For testing purpose
-   * See {@link org.apache.heron.api.windowing.WindowManagerTest}
+   * See org.apache.heron.api.windowing.WindowManagerTest
    * @param lifecycleListener
    */
   public WindowManager(WindowLifecycleListener<T> lifecycleListener) {
@@ -246,7 +246,7 @@ public class WindowManager<T extends Serializable> implements TriggerHandler {
    *
    * @param startTs the start ts (exclusive)
    * @param endTs the end ts (inclusive)
-   * @return the earliest event ts between startTs and endTs
+   * @return the earliest event ts between the startTs and endTs
    */
   public long getEarliestEventTs(long startTs, long endTs) {
     long minTs = Long.MAX_VALUE;

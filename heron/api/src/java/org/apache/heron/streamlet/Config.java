@@ -275,7 +275,7 @@ public final class Config implements Serializable {
 
     /**
      * Sets the {@link Serializer} to be used by the topology (current options are {@link
-     * KryoSerializer} and the native Java serializer.
+     * org.apache.heron.api.serializer.KryoSerializer} and the native Java serializer.
      * @param topologySerializer The data serializer to use for streamlet elements in the topology.
      */
     public Builder setSerializer(Serializer topologySerializer) {

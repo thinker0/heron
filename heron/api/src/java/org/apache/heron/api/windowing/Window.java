@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * A view of events in a sliding window.
  *
- * @param <T> the type of event that this window contains. E.g. {@link org.apache.storm.tuple.Tuple}
+ * @param <T> the type of event that this window contains. E.g. org.apache.storm.tuple.Tuple
  */
 public interface Window<T> {
   /**

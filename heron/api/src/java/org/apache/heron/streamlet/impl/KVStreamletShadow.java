@@ -24,14 +24,14 @@ import org.apache.heron.streamlet.KeyValue;
 import org.apache.heron.streamlet.impl.StreamletImpl;
 
 /**
- * KVStreamletShadow is a decorator for StreamletImpl<KeyValue<?, ?>> objects.
+ * KVStreamletShadow is a decorator for StreamletImpl&lt;KeyValue&lt;?, ?&gt;&gt; objects.
  * Please check StreamShadow comments for more details.
  *
  * Usage:
  * To create a shadow object that selecting "test" stream from an existing
- * StreamletImpl<KeyValue<K, V>> object(stream):
+ * StreamletImpl&lt;KeyValue&lt;K, V&gt;&gt; object(stream):
  *
- * KVStreamlet<K, V> kv = new KVStreamletShadow<K, V>(stream)
+ * KVStreamlet&lt;K, V&gt; kv = new KVStreamletShadow&lt;K, V&gt;(stream)
  *
  */
 public class KVStreamletShadow<K, V>
