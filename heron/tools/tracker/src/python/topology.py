@@ -588,7 +588,7 @@ class Topology:
         host=tmanager.host,
         controller_port=tmanager.controller_port,
         server_port=tmanager.server_port,
-        status_port=tmanager.stats_port,
+        stats_port=tmanager.stats_port,
     )
 
   def _update(
