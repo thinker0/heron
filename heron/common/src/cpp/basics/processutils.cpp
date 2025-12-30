@@ -21,6 +21,9 @@
 #include <sys/resource.h>
 #include <unistd.h>
 #include <gperftools/malloc_extension.h>
+#include <cstring> // For strerror
+#include <cerrno>  // For errno
+#include <iostream> // For std::cerr
 
 pid_t ProcessUtils::getPid() { return ::getpid(); }
 
@@ -67,7 +70,12 @@ size_t ProcessUtils::getTotalMemoryUsed() {
 
 sp_string ProcessUtils::getCurrentWorkingDirectory() {
   char buff[FILENAME_MAX];
-  getcwd(buff, FILENAME_MAX);
-  sp_string current_working_dir(buff);
-  return current_working_dir;
+  if (getcwd(buff, FILENAME_MAX) != NULL) {
+    sp_string current_working_dir(buff);
+    return current_working_dir;
+  } else {
+    // Handle the error, e.g., log it and return an empty string
+    std::cerr << "Failed to get current working directory: " << strerror(errno);
+    return ""; // Return an empty string on error
+  }
 }

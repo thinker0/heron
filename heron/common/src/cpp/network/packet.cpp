@@ -139,12 +139,12 @@ sp_int32 IncomingPacket::Read(struct bufferevent* _buf) {
 }
 
 sp_int32 IncomingPacket::InternalRead(struct bufferevent* _buf, char* _buffer, sp_uint32 _size) {
-  if (evbuffer_get_length(bufferevent_get_input(_buf)) < _size) {
+  if (static_cast<sp_uint32>(evbuffer_get_length(bufferevent_get_input(_buf))) < _size) {
     // We dont have all the data needed
     return 1;
   }
   int removed = evbuffer_remove(bufferevent_get_input(_buf), _buffer, _size);
-  if (removed != _size) {
+  if (static_cast<sp_uint32>(removed) != _size) {
     LOG(ERROR) << "evbuffer remove failed. Expected to remove " << _size
                << " but removed only " << removed;
     return -1;
