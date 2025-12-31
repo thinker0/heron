@@ -19,9 +19,9 @@ workspace(name = "org_apache_heron")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
-RULES_JVM_EXTERNAL_TAG = "6.9"
+RULES_JVM_EXTERNAL_TAG = "5.3"
 
-RULES_JVM_EXTERNAL_SHA = "3c41eae4226a7dfdce7b213bc541557b8475c92da71e2233ec7c306630243a65"
+RULES_JVM_EXTERNAL_SHA = "d31e369b854322ca5098ea12c69d7175ded971435e55c18dd9dd5f29cc5249ac"
 
 http_archive(
     name = "rules_jvm_external",
@@ -114,7 +114,7 @@ maven_install(
         "com.google.inject:guice:5.1.0",
         "com.google.inject.extensions:guice-assistedinject:5.1.0",
         "com.google.guava:guava:23.6-jre",
-        "com.google.protobuf:protobuf-java:3.19.6",
+        "com.google.protobuf:protobuf-java:3.25.8",
         "io.gsonfire:gson-fire:1.8.3",
         "org.apache.curator:curator-framework:" + curator_version,
         "org.apache.curator:curator-recipes:" + curator_version,
@@ -334,6 +334,7 @@ http_archive(
 
 http_archive(
     name = "com_github_google_glog",
+    # build_file = "@//:third_party/glog/glog.BUILD",
     sha256 = "21bc744fb7f2fa701ee8db339ded7dce4f975d0d55837a97be7d46e8382dea5a",
     strip_prefix = "glog-0.5.0",
     urls = ["https://github.com/google/glog/archive/v0.5.0.zip"],
@@ -404,8 +405,11 @@ http_archive(
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz"],
+    sha256 = "f6dcb97e992f13bc9effd794e9bb300f06b0dadc88061f81ae68d8d5994be964",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_docker/releases/download/v0.26.0/rules_docker-v0.26.0.tar.gz",
+        "https://github.com/bazelbuild/rules_docker/releases/download/v0.26.0/rules_docker-v0.26.0.tar.gz",
+    ],
 )
 
 load(
@@ -451,9 +455,11 @@ rules_scala_setup()
 
 rules_scala_toolchain_deps_repositories(fetch_sources = True)
 
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
 
 rules_proto_dependencies()
+
+load("@rules_proto//proto:toolchains.bzl", "rules_proto_toolchains")
 
 rules_proto_toolchains()
 
