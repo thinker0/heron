@@ -29,7 +29,7 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 BAZEL_OS=$1
-BAZEL_VERSION=7.7.1
+BAZEL_VERSION=7.6.1
 ARCH=$(uname -m)
 
 # Install Bazel
