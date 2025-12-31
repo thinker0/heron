@@ -19,7 +19,7 @@ pex_binary(
     reqs = [
         "PyYAML==5.4.1",
         "click==7.1.2",
-        "colorlog==2.6.1",
+        "colorlog==6.10.1",
     ],
     deps = [":instance-py"],
 )

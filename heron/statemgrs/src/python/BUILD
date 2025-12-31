@@ -5,8 +5,8 @@ pex_library(
     srcs = glob(["**/*.py"]),
     reqs = [
         "PyYAML==5.4.1",
-        "kazoo==2.8.0",
-        "zope.interface==4.0.5",
+        "kazoo==2.10.0",
+        "zope.interface==7.2",
     ],
     deps = [
         "//heron/proto:proto-py",
