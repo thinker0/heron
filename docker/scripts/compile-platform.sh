@@ -44,7 +44,7 @@ bazel clean
 echo "Creating packages"
 bazel build -c opt --copt=-O3 scripts/packages:tarpkgs
 bazel build -c opt --copt=-O3 scripts/packages:binpkgs
-bazel build -c opt --copt=-O3 scripts/images:heron.tar
+#bazel build -c opt --copt=-O3 scripts/images:heron.tar
 
 echo "Moving packages to /$OUTPUT_DIRECTORY"
 for file in ./bazel-bin/scripts/packages/*.tar.gz; do
@@ -62,10 +62,10 @@ for file in ./bazel-bin/scripts/packages/*.sh; do
   copyFileToDest $file $dest
 done
 
-echo "Moving docker image to /$OUTPUT_DIRECTORY"
-for file in ./bazel-bin/scripts/images/*.tar; do
-  filename=$(basename $file)
-  dest=$OUTPUT_DIRECTORY/${filename/.tar/-$HERON_VERSION-$TARGET_PLATFORM.tar}
-
-  copyFileToDest $file $dest
-done
+#echo "Moving docker image to /$OUTPUT_DIRECTORY"
+#for file in ./bazel-bin/scripts/images/*.tar; do
+#  filename=$(basename $file)
+#  dest=$OUTPUT_DIRECTORY/${filename/.tar/-$HERON_VERSION-$TARGET_PLATFORM.tar}
+#
+#  copyFileToDest $file $dest
+#done
