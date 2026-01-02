@@ -34,3 +34,5 @@ build --javacopt="-Xlint:-options"
 build:stylecheck --experimental_action_listener=tools/cpp:compile_cpp
 build:stylecheck --experimental_action_listener=tools/java:compile_java
 build:stylecheck --experimental_action_listener=tools/python:compile_python
+
+test:java_test --jvm_flags=--add-opens=java.base/java.lang=ALL-UNNAMED --jvm_flags=--add-opens=java.base/java.io=ALL-UNNAMED
