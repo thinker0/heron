@@ -172,20 +172,6 @@ load("@maven//:defs.bzl", "pinned_maven_install")
 pinned_maven_install()
 
 http_archive(
-    name = "bazel_jar_jar",
-    sha256 = "3117f913c732142a795551f530d02c9157b9ea895e6b2de0fbb5af54f03040a5",
-    strip_prefix = "bazel_jar_jar-0.1.6",
-    url = "https://github.com/bazeltools/bazel_jar_jar/releases/download/v0.1.6/bazel_jar_jar-v0.1.6.tar.gz",
-)
-
-load(
-    "@bazel_jar_jar//:jar_jar.bzl",
-    "jar_jar_repositories",
-)
-
-jar_jar_repositories()
-
-http_archive(
     name = "rules_pkg",
     sha256 = "d20c951960ed77cb7b341c2a59488534e494d5ad1d30c4818c736d57772a9fef",
     urls = [
