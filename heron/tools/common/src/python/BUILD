@@ -12,7 +12,7 @@ pex_library(
         exclude = ["clients"],
         exclude_directories = 1,
     ),
-    reqs = ["PyYAML==6.0.1"],
+    reqs = ["PyYAML==6.0.2"],
     deps = [
         "//heron/common/src/python:common-py",
     ],

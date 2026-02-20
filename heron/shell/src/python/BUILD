@@ -7,7 +7,7 @@ pex_library(
     ),
     reqs = [
         "logging-formatter-anticrlf==1.2",
-        "requests==2.29.0",
+        "requests==2.31.0",
         "tornado==6.1",
     ],
     deps = [
