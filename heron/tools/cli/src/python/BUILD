@@ -19,7 +19,6 @@ pex_library(
 
 pex_binary(
     name = "heron",
-    platforms = ["macosx-11.0-arm64-cp-39-cp39", "macosx-10.9-x86_64-cp-39-cp39"],
     srcs = [
         "main.py",
     ],

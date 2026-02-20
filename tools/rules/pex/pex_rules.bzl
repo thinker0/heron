@@ -324,7 +324,7 @@ pex_bin_attrs = _dmerge(pex_attrs, {
     "main": attr.label(allow_single_file = True),
     "entrypoint": attr.string(),
     "interpreter": attr.string(),
-    "platforms": attr.string_list(default = ["macosx-11.0-arm64-cp-39-cp39", "macosx-10.9-x86_64-cp-39-cp39", "linux-x86_64-cp-39-cp39"]),
+    "platforms": attr.string_list(default = ["macosx-11.0-arm64-cp-39-cp39"]),
     "python_shebang": attr.string(default = "#!/usr/bin/env python3.9"),
     "pex_use_wheels": attr.bool(default = True),
     "pex_verbosity": attr.int(default = 0),
