@@ -56,7 +56,7 @@ reef_version = "0.14.0"
 
 slf4j_version = "1.7.36"
 
-logback_verison = "1.2.11"
+logback_version = "1.2.11"
 
 distributedlog_version = "4.14.5"
 
@@ -76,7 +76,7 @@ maven_install(
         "org.slf4j:log4j-over-slf4j:%s" % slf4j_version,
         "org.slf4j:jul-to-slf4j:%s" % slf4j_version,
         "org.slf4j:jcl-over-slf4j:%s" % slf4j_version,
-        "ch.qos.logback:logback-classic:%s" % logback_verison,
+        "ch.qos.logback:logback-classic:%s" % logback_version,
         "antlr:antlr:2.7.7",
         "org.apache.zookeeper:zookeeper:3.8.4",
         "io.kubernetes:client-java:" + kubernetes_client_version,
@@ -93,7 +93,6 @@ maven_install(
         "org.apache.reef:reef-runtime-local:" + reef_version,
         "org.apache.httpcomponents:httpclient:" + http_client_version,
         "org.apache.httpcomponents:httpmime:" + http_client_version,
-        "com.google.apis:google-api-services-storage:v1-rev108-1.22.0",
         "com.microsoft.dhalion:dhalion:0.2.6",
         "com.amazonaws:aws-java-sdk-s3:" + aws_version,
         "org.eclipse.jetty:jetty-server:" + jetty_version,
