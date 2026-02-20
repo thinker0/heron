@@ -48,7 +48,7 @@ curator_version = "5.1.0"
 
 google_client_version = "1.22.0"
 
-jackson_version = "2.8.8"
+jackson_version = "2.13.5"
 
 powermock_version = "2.0.9"
 
@@ -63,7 +63,7 @@ distributedlog_version = "4.14.5"
 http_client_version = "4.5.14"
 
 # heron API server
-jetty_version = "9.4.6.v20170531"
+jetty_version = "9.4.53.v20231009"
 
 jersey_version = "2.25.1"
 
@@ -112,7 +112,7 @@ maven_install(
         "org.roaringbitmap:RoaringBitmap:0.6.51",
         "com.google.inject:guice:5.1.0",
         "com.google.inject.extensions:guice-assistedinject:5.1.0",
-        "com.google.guava:guava:23.6-jre",
+        "com.google.guava:guava:32.1.3-jre",
         "com.google.protobuf:protobuf-java:3.25.8",
         "io.gsonfire:gson-fire:1.8.3",
         "org.apache.curator:curator-framework:" + curator_version,
@@ -120,12 +120,12 @@ maven_install(
         "org.apache.curator:curator-client:" + curator_version,
         "tech.tablesaw:tablesaw-core:0.11.4",
         "org.glassfish.hk2.external:aopalliance-repackaged:2.5.0-b32",
-        "org.apache.commons:commons-compress:1.14",
+        "org.apache.commons:commons-compress:1.26.1",
         "org.apache.commons:commons-lang3:3.12.0",
         "commons-io:commons-io:2.4",
         "commons-collections:commons-collections:3.2.1",
         "commons-cli:commons-cli:1.3.1",
-        "org.apache.commons:commons-compress:1.14",
+        "org.apache.commons:commons-compress:1.26.1",
         "com.jayway.jsonpath:json-path:2.1.0",
         "com.fasterxml.jackson.core:jackson-core:%s" % jackson_version,
         "com.fasterxml.jackson.core:jackson-annotations:%s" % jackson_version,

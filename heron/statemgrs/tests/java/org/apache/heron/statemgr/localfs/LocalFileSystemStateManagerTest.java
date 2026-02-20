@@ -104,7 +104,7 @@ public class LocalFileSystemStateManagerTest {
 
   @Test
   public void testSetSchedulerLocation() throws Exception {
-    doReturn(mock(ListenableFuture.class)).when(manager)
+    doReturn(com.google.common.util.concurrent.SettableFuture.create()).when(manager)
         .setData(anyString(), any(byte[].class), anyBoolean());
 
     manager.setSchedulerLocation(Scheduler.SchedulerLocation.getDefaultInstance(), TOPOLOGY_NAME);
