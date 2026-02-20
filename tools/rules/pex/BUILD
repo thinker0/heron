@@ -79,3 +79,24 @@ genrule(
     output_to_bindir = True,
     visibility = ["//visibility:public"],
 )
+
+# Config settings for PEX platform selection
+config_setting(
+    name = "macos_arm64",
+    values = {"cpu": "darwin_arm64"},
+)
+
+config_setting(
+    name = "macos_x86_64",
+    values = {"cpu": "darwin"},
+)
+
+config_setting(
+    name = "linux_x86_64",
+    values = {"cpu": "k8"},
+)
+
+config_setting(
+    name = "linux_arm64",
+    values = {"cpu": "aarch64"},
+)

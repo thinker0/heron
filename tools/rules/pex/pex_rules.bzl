@@ -344,7 +344,7 @@ pex_binary_outputs = {
     "deploy_pex": "%{name}.pex",
 }
 
-pex_binary = rule(
+_pex_binary = rule(
     _pex_binary_impl,
     executable = True,
     attrs = pex_bin_attrs,
@@ -478,4 +478,19 @@ def pex_pytest(
         srcs = srcs,
         timeout = timeout,
         tags = tags,
+    )
+
+def pex_binary(name, platforms = None, **kwargs):
+    if platforms == None:
+        platforms = select({
+            "//tools/rules/pex:macos_arm64": ["macosx-11.0-arm64-cp-39-cp39"],
+            "//tools/rules/pex:macos_x86_64": ["macosx-10.9-x86_64-cp-39-cp39"],
+            "//tools/rules/pex:linux_x86_64": ["linux-x86_64-cp-39-cp39"],
+            "//conditions:default": [],
+        })
+    
+    _pex_binary(
+        name = name,
+        platforms = platforms,
+        **kwargs
     )
