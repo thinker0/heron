@@ -38,7 +38,7 @@ import org.apache.heron.spi.utils.NetworkUtils;
 
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
+@PowerMockIgnore({"jdk.internal.reflect.*", "javax.net.ssl.*"})
 @PrepareForTest(NetworkUtils.class)
 public class MarathonControllerTest {
   private static final String MARATHON_URI = "http://marathon.uri:8080";
@@ -75,26 +75,26 @@ public class MarathonControllerTest {
     HttpURLConnection httpURLConnection = Mockito.mock(HttpURLConnection.class);
 
     // Failed to get connection
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     Assert.assertFalse(controller.killTopology());
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
 
     // Failed to send request
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(false)
         .when(NetworkUtils.class, "sendHttpDeleteRequest", Mockito.any(HttpURLConnection.class));
     Assert.assertFalse(controller.killTopology());
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpDeleteRequest(Mockito.any(HttpURLConnection.class));
 
     // Failed to get response
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -103,13 +103,13 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             Mockito.any(HttpURLConnection.class), Mockito.anyInt());
     Assert.assertFalse(controller.killTopology());
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpDeleteRequest(Mockito.any(HttpURLConnection.class));
     NetworkUtils.checkHttpResponseCode(Mockito.any(HttpURLConnection.class), Mockito.anyInt());
 
     // Failed authentication
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -124,7 +124,7 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             httpURLConnection, HttpURLConnection.HTTP_UNAUTHORIZED);
     Assert.assertFalse(controller.killTopology());
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),
@@ -134,7 +134,7 @@ public class MarathonControllerTest {
     NetworkUtils.checkHttpResponseCode(httpURLConnection, HttpURLConnection.HTTP_UNAUTHORIZED);
 
     // Success
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -143,7 +143,7 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             Mockito.any(HttpURLConnection.class), Mockito.anyInt());
     Assert.assertTrue(controller.killTopology());
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpDeleteRequest(Mockito.any(HttpURLConnection.class));
     NetworkUtils.checkHttpResponseCode(Mockito.any(HttpURLConnection.class), Mockito.anyInt());
@@ -159,15 +159,15 @@ public class MarathonControllerTest {
     int appId = 0;
 
     // Failed to get connection
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     Assert.assertFalse(controller.restartApp(appId));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
 
     // Failed to send request
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(false)
@@ -176,7 +176,7 @@ public class MarathonControllerTest {
             Mockito.anyString(),
             Mockito.any(byte[].class));
     Assert.assertFalse(controller.restartApp(appId));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),
@@ -184,7 +184,7 @@ public class MarathonControllerTest {
         Mockito.any(byte[].class));
 
     // Failed to get response
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -196,7 +196,7 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             Mockito.any(HttpURLConnection.class), Mockito.anyInt());
     Assert.assertFalse(controller.restartApp(appId));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),
@@ -205,7 +205,7 @@ public class MarathonControllerTest {
     NetworkUtils.checkHttpResponseCode(Mockito.any(HttpURLConnection.class), Mockito.anyInt());
 
     // Failed authentication
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -220,7 +220,7 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             httpURLConnection, HttpURLConnection.HTTP_UNAUTHORIZED);
     Assert.assertFalse(controller.restartApp(appId));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),
@@ -230,7 +230,7 @@ public class MarathonControllerTest {
     NetworkUtils.checkHttpResponseCode(httpURLConnection, HttpURLConnection.HTTP_UNAUTHORIZED);
 
     // Success
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -242,7 +242,7 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             Mockito.any(HttpURLConnection.class), Mockito.anyInt());
     Assert.assertTrue(controller.restartApp(appId));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),
@@ -261,15 +261,15 @@ public class MarathonControllerTest {
     final String appConf = "{app: conf}";
 
     // Failed to get connection
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     Assert.assertFalse(controller.submitTopology(Mockito.anyString()));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
 
     // Failed to send request
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(false)
@@ -278,7 +278,7 @@ public class MarathonControllerTest {
             Mockito.anyString(),
             Mockito.any(byte[].class));
     Assert.assertFalse(controller.submitTopology(appConf));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),
@@ -286,7 +286,7 @@ public class MarathonControllerTest {
         Mockito.any(byte[].class));
 
     // Failed to get response
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -298,7 +298,7 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             Mockito.any(HttpURLConnection.class), Mockito.anyInt());
     Assert.assertFalse(controller.submitTopology(appConf));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),
@@ -307,7 +307,7 @@ public class MarathonControllerTest {
     NetworkUtils.checkHttpResponseCode(Mockito.any(HttpURLConnection.class), Mockito.anyInt());
 
     // Failed authentication
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -322,7 +322,7 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             httpURLConnection, HttpURLConnection.HTTP_UNAUTHORIZED);
     Assert.assertFalse(controller.submitTopology(appConf));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),
@@ -333,7 +333,7 @@ public class MarathonControllerTest {
 
 
     // Success
-    PowerMockito.spy(NetworkUtils.class);
+    PowerMockito.mockStatic(NetworkUtils.class);
     PowerMockito.doReturn(httpURLConnection)
         .when(NetworkUtils.class, "getHttpConnection", Mockito.anyString());
     PowerMockito.doReturn(true)
@@ -345,7 +345,7 @@ public class MarathonControllerTest {
         .when(NetworkUtils.class, "checkHttpResponseCode",
             Mockito.any(HttpURLConnection.class), Mockito.anyInt());
     Assert.assertTrue(controller.submitTopology(appConf));
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(NetworkUtils.class);
     NetworkUtils.getHttpConnection(Mockito.anyString());
     NetworkUtils.sendHttpPostRequest(
         Mockito.any(HttpURLConnection.class),

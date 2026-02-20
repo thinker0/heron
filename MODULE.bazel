@@ -1,3 +1,4 @@
+module(name = "org_apache_heron", version = "0.0.0")
 ###############################################################################
 # Bazel now uses Bzlmod by default to manage external dependencies.
 # Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.

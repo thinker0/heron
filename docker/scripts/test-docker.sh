@@ -40,11 +40,15 @@ DOCKER_FILE=$(dockerfile_path_for_platform $TARGET_PLATFORM)
 verify_dockerfile_exists $DOCKER_FILE
 
 echo "Building heron-compiler container"
-docker buildx build -t heron-compiler:$TARGET_PLATFORM -f $DOCKER_FILE $SCRATCH_DIR
+docker build \
+    --platform=linux/amd64 \
+    -t heron-compiler:$TARGET_PLATFORM \
+    -f $DOCKER_FILE $SCRATCH_DIR
 
 echo "Running build in container"
 docker run \
     --rm \
+    --platform=linux/amd64 \
     -e TARGET_PLATFORM=$TARGET_PLATFORM \
     -e SCRATCH_DIR="/scratch" \
     -e SOURCE_TARBALL="/src.tar.gz" \

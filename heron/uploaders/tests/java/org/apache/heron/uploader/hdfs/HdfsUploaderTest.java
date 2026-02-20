@@ -34,7 +34,11 @@ public class HdfsUploaderTest {
 
   @Before
   public void setUp() throws Exception {
-    Config config = Mockito.mock(Config.class);
+    Config config = Config.newBuilder()
+        .put(HdfsContext.HDFS_TOPOLOGIES_DIRECTORY_URI, "hdfs://localhost:9000/heron/repository")
+        .put("heron.topology.package.file", "/tmp/topology.tar.gz")
+        .put("heron.topology.name", "test-topology")
+        .build();
 
     // Insert mock HdfsController
     uploader = Mockito.spy(new HdfsUploader());

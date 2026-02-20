@@ -76,7 +76,7 @@ public class MesosSchedulerTest {
     scheduler = Mockito.spy(MesosScheduler.class);
     Mockito.doReturn(mesosFramework).when(scheduler).getMesosFramework();
     Mockito.doReturn(driver).when(scheduler)
-        .getSchedulerDriver(Mockito.anyString(), Mockito.eq(mesosFramework));
+        .getSchedulerDriver(Mockito.any(), Mockito.any());
     Mockito.doNothing().when(scheduler)
         .startSchedulerDriver();
 

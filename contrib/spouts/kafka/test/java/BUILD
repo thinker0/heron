@@ -7,7 +7,7 @@ heron_kafka_spouts_test_dep = [
     "//heron/common/src/java:config-java",
     "//third_party/java:junit4",
     "@maven//:org_apache_kafka_kafka_clients",
-    "@maven//:org_mockito_mockito_all",
+    "@maven//:org_mockito_mockito_core",
 ]
 
 java_test(

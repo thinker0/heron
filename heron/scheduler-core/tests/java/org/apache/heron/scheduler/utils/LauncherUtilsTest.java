@@ -42,7 +42,7 @@ import org.apache.heron.spi.utils.ReflectionUtils;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("jdk.internal.reflect.*")
-@PrepareForTest({ReflectionUtils.class, TopologyUtils.class, TopologyAPI.Topology.class})
+@PrepareForTest({ReflectionUtils.class, TopologyUtils.class})
 public class LauncherUtilsTest {
   @Test
   public void generatesPackingPlan() throws Exception {
@@ -56,7 +56,7 @@ public class LauncherUtilsTest {
     PowerMockito.spy(ReflectionUtils.class);
     PowerMockito.doReturn(mockPacking).when(ReflectionUtils.class, "newInstance", PACKING_CLASS);
 
-    TopologyAPI.Topology mockTopology = PowerMockito.mock(TopologyAPI.Topology.class);
+    TopologyAPI.Topology mockTopology = TopologyAPI.Topology.newBuilder().setId("testTopologyId").setName("testTopologyName").setState(TopologyAPI.TopologyState.RUNNING).build();
 
     Config mockConfig = Mockito.mock(Config.class);
     Mockito.when(mockConfig.getStringValue(Key.PACKING_CLASS)).thenReturn(PACKING_CLASS);
@@ -93,9 +93,9 @@ public class LauncherUtilsTest {
 
   @Test
   public void constructsConfigWithTopologyInfo() throws Exception {
-    TopologyAPI.Topology mockTopology = PowerMockito.mock(TopologyAPI.Topology.class);
-    PowerMockito.when(mockTopology.getId()).thenReturn("testTopologyId");
-    PowerMockito.when(mockTopology.getName()).thenReturn("testTopologyName");
+    TopologyAPI.Topology mockTopology = TopologyAPI.Topology.newBuilder().setId("testTopologyId").setName("testTopologyName").setState(TopologyAPI.TopologyState.RUNNING).build();
+    
+    
 
     SchedulerStateManagerAdaptor mockStMgr = Mockito.mock(SchedulerStateManagerAdaptor.class);
 

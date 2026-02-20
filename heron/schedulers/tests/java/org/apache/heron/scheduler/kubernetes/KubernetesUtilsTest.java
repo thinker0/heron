@@ -99,15 +99,11 @@ public class KubernetesUtilsTest {
             Comparator.comparing(V1EnvVar::getName), description));
 
     // Merge both lists.
-    Assert.assertTrue("<primaryList> and <secondaryList> merged and deduplicated",
-        Arrays.asList(heronEnvVars, inputEnvVars).containsAll(
-            commonUtils.mergeListsDedupe(heronEnvVars, inputEnvVars,
-                Comparator.comparing(V1EnvVar::getName), description)));
-    System.out.printf("Expected merged and deduplicated lists: %s%n", expectedEnvVars);
-    System.out.printf("Merged and deduplicated lists: %s%n",
-        commonUtils.mergeListsDedupe(heronEnvVars, inputEnvVars,
-            Comparator.comparing(V1EnvVar::getName), description));
-    // Expect thrown error.
+    List<V1EnvVar> merged = commonUtils.mergeListsDedupe(heronEnvVars, inputEnvVars,
+        Comparator.comparing(V1EnvVar::getName), description);
+    Assert.assertEquals("Merged list should have 3 elements", 3, merged.size());
+    Assert.assertTrue("Merged list should contain all Heron env vars", merged.containsAll(heronEnvVars));
+    Assert.assertTrue("Merged list should contain the additional env var", merged.contains(additionEnvVar));
     String errorMessage = "";
     try {
       commonUtils.mergeListsDedupe(heronEnvVars, Collections.singletonList(new V1EnvVar()),

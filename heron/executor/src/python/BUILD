@@ -4,7 +4,7 @@ pex_library(
     name = "executor-py",
     srcs = ["heron_executor.py"],
     reqs = [
-        "PyYAML==5.4.1",
+        "PyYAML==6.0.1",
         "click==7.1.2",
     ],
     deps = [

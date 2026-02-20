@@ -19,7 +19,10 @@
 
 package org.apache.heron.statefulstorage.hdfs;
 
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -39,12 +39,15 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.PositionedReadable;
+import org.apache.hadoop.fs.Seekable;
 import org.apache.heron.proto.ckptmgr.CheckpointManager;
 import org.apache.heron.proto.system.PhysicalPlans;
 import org.apache.heron.spi.statefulstorage.Checkpoint;
 import org.apache.heron.spi.statefulstorage.CheckpointInfo;
 import org.apache.heron.statefulstorage.StatefulStorageTestContext;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -56,9 +59,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
-@PrepareForTest({FileSystem.class, CheckpointManager.InstanceStateCheckpoint.class})
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class HDFSStorageTest {
 
   private PhysicalPlans.Instance instance;
@@ -66,6 +67,34 @@ public class HDFSStorageTest {
 
   private HDFSStorage hdfsStorage;
   private FileSystem mockFileSystem;
+
+  private static class FakeFSDataInputStream extends FSDataInputStream {
+    FakeFSDataInputStream(byte[] data) throws IOException {
+      super(new FakeInputStream(data));
+    }
+  }
+
+  private static class FakeInputStream extends InputStream implements Seekable, PositionedReadable {
+    private final ByteArrayInputStream bis;
+    FakeInputStream(byte[] data) { this.bis = new ByteArrayInputStream(data); }
+    @Override public int read() throws IOException { return bis.read(); }
+    @Override public int read(byte[] b, int off, int len) throws IOException { return bis.read(b, off, len); }
+    @Override public void seek(long pos) throws IOException { }
+    @Override public long getPos() throws IOException { return 0; }
+    @Override public boolean seekToNewSource(long targetPos) throws IOException { return false; }
+    @Override public int read(long position, byte[] buffer, int offset, int length) throws IOException { return 0; }
+    @Override public void readFully(long position, byte[] buffer, int offset, int length) throws IOException { }
+    @Override public void readFully(long position, byte[] buffer) throws IOException { }
+  }
+
+  private static class FakeFSDataOutputStream extends FSDataOutputStream {
+    private final ByteArrayOutputStream bos;
+    FakeFSDataOutputStream(ByteArrayOutputStream bos) throws IOException {
+      super(bos, null);
+      this.bos = bos;
+    }
+    byte[] toByteArray() { return bos.toByteArray(); }
+  }
 
   @Before
   public void before() throws Exception {
@@ -76,10 +105,12 @@ public class HDFSStorageTest {
     when(mockFileSystem.getUri()).thenReturn(new URI("hdfs://hdfs_home_path/ckpgmgr"));
     when(mockFileSystem.getHomeDirectory()).thenReturn(new Path("hdfs_home_path"));
 
-    PowerMockito.spy(FileSystem.class);
-    PowerMockito.doReturn(mockFileSystem).when(FileSystem.class, "get", any(Configuration.class));
-
-    hdfsStorage = spy(HDFSStorage.class);
+    hdfsStorage = spy(new HDFSStorage() {
+        @Override
+        FileSystem getFileSystem(Configuration configuration) throws IOException {
+            return mockFileSystem;
+        }
+    });
     hdfsStorage.init(StatefulStorageTestContext.TOPOLOGY_NAME, config);
 
     instance = StatefulStorageTestContext.getInstance();
@@ -93,14 +124,16 @@ public class HDFSStorageTest {
 
   @Test
   public void testStore() throws Exception {
-    PowerMockito.mockStatic(CheckpointManager.InstanceStateCheckpoint.class);
-    CheckpointManager.InstanceStateCheckpoint mockCheckpointState =
-        mock(CheckpointManager.InstanceStateCheckpoint.class);
+    CheckpointManager.InstanceStateCheckpoint checkpointState =
+        CheckpointManager.InstanceStateCheckpoint.newBuilder()
+            .setCheckpointId("test-checkpoint")
+            .build();
 
-    Checkpoint checkpoint = new Checkpoint(mockCheckpointState);
+    Checkpoint checkpoint = new Checkpoint(checkpointState);
 
-    FSDataOutputStream mockFSDateOutputStream = mock(FSDataOutputStream.class);
-    when(mockFileSystem.create(any(Path.class))).thenReturn(mockFSDateOutputStream);
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    FakeFSDataOutputStream fakeOutputStream = new FakeFSDataOutputStream(bos);
+    when(mockFileSystem.create(any(Path.class))).thenReturn(fakeOutputStream);
 
     doNothing().when(hdfsStorage).createDir(anyString());
 
@@ -108,19 +141,13 @@ public class HDFSStorageTest {
         StatefulStorageTestContext.CHECKPOINT_ID, instance);
     hdfsStorage.storeCheckpoint(info, checkpoint);
 
-    verify(mockCheckpointState).writeTo(mockFSDateOutputStream);
+    assertArrayEquals(checkpointState.toByteArray(), bos.toByteArray());
   }
 
   @Test
   public void testRestore() throws Exception {
-    FSDataInputStream mockFSDataInputStream = mock(FSDataInputStream.class);
-
-    when(mockFileSystem.open(any(Path.class))).thenReturn(mockFSDataInputStream);
-
-    PowerMockito.spy(CheckpointManager.InstanceStateCheckpoint.class);
-    PowerMockito.doReturn(instanceCheckpointState)
-        .when(CheckpointManager.InstanceStateCheckpoint.class, "parseFrom",
-            mockFSDataInputStream);
+    FakeFSDataInputStream fakeInputStream = new FakeFSDataInputStream(instanceCheckpointState.toByteArray());
+    when(mockFileSystem.open(any(Path.class))).thenReturn(fakeInputStream);
 
     final CheckpointInfo info = new CheckpointInfo(
         StatefulStorageTestContext.CHECKPOINT_ID, instance);

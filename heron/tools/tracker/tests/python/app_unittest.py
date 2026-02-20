@@ -45,14 +45,14 @@ def test_clusters(client, tracker):
   assert response.status_code == 200
 
 def test_machines(client):
-  response = client.get("/machines", json={
+  response = client.get("/machines", params={
       "cluster": ["c1", "c3"],
       "environ": ["e1", "e3"],
   })
   assert response.json() == {}
 
 def test_topologies(client):
-  response = client.get("/topologies", json={
+  response = client.get("/topologies", params={
       "cluster": [],
       "environ": [],
   })

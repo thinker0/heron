@@ -34,7 +34,7 @@ import org.apache.heron.spi.packing.PackingPlan;
 import org.apache.heron.spi.scheduler.IScheduler;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
+@PowerMockIgnore({"jdk.internal.reflect.*", "javax.net.ssl.*"})
 @PrepareForTest(LauncherUtils.class)
 public class AuroraLauncherTest {
   @Test
@@ -44,36 +44,36 @@ public class AuroraLauncherTest {
     launcher.initialize(config, config);
 
     LauncherUtils mockLauncherUtils = Mockito.mock(LauncherUtils.class);
-    PowerMockito.spy(LauncherUtils.class);
+    PowerMockito.mockStatic(LauncherUtils.class);
     PowerMockito.doReturn(mockLauncherUtils).when(LauncherUtils.class, "getInstance");
 
     // Failed to schedule
     Mockito.when(mockLauncherUtils.onScheduleAsLibrary(
-        Mockito.any(Config.class),
-        Mockito.any(Config.class),
-        Mockito.any(IScheduler.class),
-        Mockito.any(PackingPlan.class))).thenReturn(false);
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any())).thenReturn(false);
 
     Assert.assertFalse(launcher.launch(Mockito.mock(PackingPlan.class)));
     Mockito.verify(mockLauncherUtils).onScheduleAsLibrary(
-        Mockito.any(Config.class),
-        Mockito.any(Config.class),
-        Mockito.any(IScheduler.class),
-        Mockito.any(PackingPlan.class));
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any());
 
     // Happy path
     Mockito.when(mockLauncherUtils.onScheduleAsLibrary(
-        Mockito.any(Config.class),
-        Mockito.any(Config.class),
-        Mockito.any(IScheduler.class),
-        Mockito.any(PackingPlan.class))).thenReturn(true);
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any())).thenReturn(true);
 
     Assert.assertTrue(launcher.launch(Mockito.mock(PackingPlan.class)));
     Mockito.verify(mockLauncherUtils, Mockito.times(2)).onScheduleAsLibrary(
-        Mockito.any(Config.class),
-        Mockito.any(Config.class),
-        Mockito.any(IScheduler.class),
-        Mockito.any(PackingPlan.class));
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any());
 
     launcher.close();
   }

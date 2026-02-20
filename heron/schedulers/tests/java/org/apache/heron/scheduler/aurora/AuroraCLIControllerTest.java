@@ -162,8 +162,8 @@ public class AuroraCLIControllerTest {
       }
     }).when(controller).runProcess(
                     Matchers.anyListOf(String.class),
-                    Matchers.any(StringBuilder.class),
-                    Matchers.any(StringBuilder.class));
+                    Matchers.any(),
+                    Matchers.any());
     Set<Integer> ret = controller.addContainers(containersToAdd);
     Assert.assertEquals(containersToAdd.intValue(), ret.size());
     Mockito.verify(controller)
@@ -186,8 +186,8 @@ public class AuroraCLIControllerTest {
       }
     }).when(controller).runProcess(
                     Matchers.anyListOf(String.class),
-                    Matchers.any(StringBuilder.class),
-                    Matchers.any(StringBuilder.class));
+                    Matchers.any(),
+                    Matchers.any());
     Set<Integer> ret = controller.addContainers(containersToAdd);
     Assert.assertEquals(0, ret.size());
     Mockito.verify(controller)

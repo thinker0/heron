@@ -34,8 +34,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.mockito.Mockito.times;
-
 /**
  * FileUtils Tester.
  */
@@ -50,7 +48,6 @@ public class FileUtilsTest {
   @Test
   public void testDeleteFile() {
     PowerMockito.mockStatic(Files.class);
-
     Assert.assertTrue(FileUtils.deleteFile(""));
   }
 
@@ -60,7 +57,6 @@ public class FileUtilsTest {
   @Test
   public void testCopyFile() {
     PowerMockito.mockStatic(Files.class);
-
     Assert.assertTrue(FileUtils.copyFile("", ""));
   }
 
@@ -149,20 +145,12 @@ public class FileUtilsTest {
    */
   @Test
   public void testDeleteDirWithDirs() throws IOException {
-    // Test delete dirs recursively,
-    //  parent/ -- child1/ -- child3/
-    //          |
-    //          -- child2/
     Path parent = Files.createTempDirectory("testDeleteDir");
     Path child1 = Files.createTempDirectory(parent, "child1");
     Path child2 = Files.createTempDirectory(parent, "child2");
     Path child3 = Files.createTempDirectory(child1, "child3");
 
-    PowerMockito.spy(FileUtils.class);
-
     FileUtils.deleteDir(parent.toFile(), true);
-
-    PowerMockito.verifyStatic(times(4));
 
     Assert.assertFalse(parent.toFile().exists());
     Assert.assertFalse(child1.toFile().exists());
@@ -175,16 +163,10 @@ public class FileUtilsTest {
    */
   @Test
   public void testCleanDir() throws IOException {
-    // Test clean dirs,
-    //  parent/ -- child1/ -- child3/
-    //          |
-    //          -- child2/
-    Path parent = Files.createTempDirectory("testDeleteDir");
+    Path parent = Files.createTempDirectory("testCleanDir");
     Path child1 = Files.createTempDirectory(parent, "child1");
     Path child2 = Files.createTempDirectory(parent, "child2");
     Path child3 = Files.createTempDirectory(child1, "child3");
-
-    PowerMockito.spy(FileUtils.class);
 
     FileUtils.cleanDir(parent.toString());
 
@@ -193,5 +175,4 @@ public class FileUtilsTest {
     Assert.assertFalse(child2.toFile().exists());
     Assert.assertFalse(child3.toFile().exists());
   }
-
 }

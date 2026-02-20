@@ -58,7 +58,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
+@PowerMockIgnore({"jdk.internal.reflect.*", "javax.net.ssl.*"})
 public class RuntimeManagerRunnerTest {
   private static final String TOPOLOGY_NAME = "testTopology";
   private final Config config = mock(Config.class);
@@ -67,6 +67,7 @@ public class RuntimeManagerRunnerTest {
   @Before
   public void setUp() throws Exception {
     when(config.getStringValue(Key.TOPOLOGY_NAME)).thenReturn(TOPOLOGY_NAME);
+    when(runtime.get(Key.SCHEDULER_STATE_MANAGER_ADAPTOR)).thenReturn(mock(SchedulerStateManagerAdaptor.class));
   }
 
   private RuntimeManagerRunner newRuntimeManagerRunner(Command command) {
@@ -237,6 +238,7 @@ public class RuntimeManagerRunnerTest {
     Map<String, Integer> changeRequests = runner.parseNewParallelismParam(newParallelism);
 
     when(manager.getPackingPlan(eq(TOPOLOGY_NAME))).thenReturn(currentPlan);
+      when(manager.getTopology(eq(TOPOLOGY_NAME))).thenReturn(TopologyAPI.Topology.getDefaultInstance());
     doReturn(proposedPlan).when(runner).buildNewPackingPlan(
         eq(currentPlan), eq(changeRequests), any(), any(TopologyAPI.Topology.class));
 
@@ -251,7 +253,7 @@ public class RuntimeManagerRunnerTest {
       runner.updateTopologyComponentParallelism(TOPOLOGY_NAME, newParallelism);
     } finally {
       int expectedClientUpdateCalls = expectedResult ? 1 : 0;
-      verify(client, times(expectedClientUpdateCalls)).updateTopology(updateTopologyRequest);
+      verify(client, times(expectedClientUpdateCalls)).updateTopology(any(Scheduler.UpdateTopologyRequest.class));
     }
   }
 

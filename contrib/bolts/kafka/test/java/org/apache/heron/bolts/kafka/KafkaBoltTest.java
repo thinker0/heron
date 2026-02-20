@@ -86,7 +86,7 @@ public class KafkaBoltTest {
     ProducerRecord<String, byte[]> producerRecord = new ProducerRecord<>("topic", "key", value);
     when(producer.send(eq(producerRecord), any(Callback.class)))
         .then((Answer<Future<RecordMetadata>>) invocationOnMock -> {
-          invocationOnMock.getArgumentAt(1, Callback.class)
+          invocationOnMock.getArgument(1, Callback.class)
               .onCompletion(new RecordMetadata(null, 0, 0, 0, null, 0, 0), null);
           return future;
         });
@@ -95,7 +95,7 @@ public class KafkaBoltTest {
 
     when(producer.send(eq(producerRecord), any(Callback.class)))
         .then((Answer<Future<RecordMetadata>>) invocationOnMock -> {
-          invocationOnMock.getArgumentAt(1, Callback.class)
+          invocationOnMock.getArgument(1, Callback.class)
               .onCompletion(new RecordMetadata(null, 0, 0, 0, null, 0, 0), new Exception());
           return future;
         });

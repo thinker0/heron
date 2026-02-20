@@ -38,7 +38,7 @@ import org.apache.heron.spi.packing.PackingPlan;
 import org.apache.heron.spi.scheduler.IScheduler;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
+@PowerMockIgnore({"jdk.internal.reflect.*", "javax.net.ssl.*", "javax.xml.*", "javax.management.*", "org.w3c.dom.*", "org.xml.sax.*", "javax.xml.parsers.*", "javax.xml.datatype.*"})
 @PrepareForTest({SlurmContext.class, LauncherUtils.class})
 public class SlurmLauncherTest {
   private static final String TOPOLOGY_NAME = "testTopology";
@@ -71,7 +71,7 @@ public class SlurmLauncherTest {
     PowerMockito.doReturn(WORKING_DIRECTORY).when(SlurmContext.class, "workingDirectory", config);
 
     LauncherUtils mockLauncherUtils = Mockito.mock(LauncherUtils.class);
-    PowerMockito.spy(LauncherUtils.class);
+    PowerMockito.mockStatic(LauncherUtils.class);
     PowerMockito.doReturn(mockLauncherUtils).when(LauncherUtils.class, "getInstance");
 
     SlurmLauncher slurmLauncher = Mockito.spy(new SlurmLauncher());
@@ -87,31 +87,31 @@ public class SlurmLauncherTest {
 
     // Failed to schedule
     Mockito.when(mockLauncherUtils.onScheduleAsLibrary(
-        Mockito.any(Config.class),
-        Mockito.any(Config.class),
-        Mockito.any(IScheduler.class),
-        Mockito.any(PackingPlan.class))).thenReturn(false);
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any())).thenReturn(false);
     PowerMockito.doReturn(true).when(slurmLauncher).setupWorkingDirectory();
     Assert.assertFalse(slurmLauncher.launch(Mockito.mock(PackingPlan.class)));
     Mockito.verify(mockLauncherUtils).onScheduleAsLibrary(
-        Mockito.any(Config.class),
-        Mockito.any(Config.class),
-        Mockito.any(IScheduler.class),
-        Mockito.any(PackingPlan.class));
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any());
 
     // happy path
     Mockito.when(mockLauncherUtils.onScheduleAsLibrary(
-        Mockito.any(Config.class),
-        Mockito.any(Config.class),
-        Mockito.any(IScheduler.class),
-        Mockito.any(PackingPlan.class))).thenReturn(true);
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any())).thenReturn(true);
     Assert.assertTrue(slurmLauncher.launch(Mockito.mock(PackingPlan.class)));
-    Mockito.verify(slurmLauncher, Mockito.times(3)).launch(Mockito.any(PackingPlan.class));
+    Mockito.verify(slurmLauncher, Mockito.times(3)).launch(Mockito.any());
     Mockito.verify(mockLauncherUtils, Mockito.times(2)).onScheduleAsLibrary(
-        Mockito.any(Config.class),
-        Mockito.any(Config.class),
-        Mockito.any(IScheduler.class),
-        Mockito.any(PackingPlan.class));
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any(),
+        Mockito.any());
     slurmLauncher.close();
   }
 }

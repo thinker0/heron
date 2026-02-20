@@ -29,10 +29,10 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+
+
+
+
 
 import org.apache.commons.io.IOUtils;
 import org.apache.heron.api.generated.TopologyAPI;
@@ -45,9 +45,9 @@ import org.apache.heron.spi.utils.PackingTestUtils;
 import static org.apache.heron.spi.packing.PackingPlan.ContainerPlan;
 import static org.junit.Assert.assertEquals;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
-@PrepareForTest(TopologyAPI.Topology.class)
+
+
+
 public class UpdateDryRunRenderTest {
 
   private PackingPlan originalPlan;
@@ -103,7 +103,7 @@ public class UpdateDryRunRenderTest {
     }
     // Input might contain UTF-8 character, so we read stream with UTF-8 decoding
     String exampleTable = IOUtils.toString(stream, StandardCharsets.UTF_8);
-    TopologyAPI.Topology topology = PowerMockito.mock(TopologyAPI.Topology.class);
+    TopologyAPI.Topology topology = TopologyAPI.Topology.getDefaultInstance();
     Config config = Config.newBuilder().put(Key.REPACKING_CLASS,
         "org.apache.heron.packing.binpacking.FirstFitDecreasingPacking").build();
     UpdateDryRunResponse resp = new UpdateDryRunResponse(

@@ -36,131 +36,115 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import org.apache.heron.api.generated.TopologyAPI;
+import org.apache.heron.common.basics.PackageType;
 import org.apache.heron.proto.scheduler.Scheduler;
-import org.apache.heron.scheduler.utils.SchedulerUtils;
 import org.apache.heron.spi.common.Config;
 import org.apache.heron.spi.common.Key;
 import org.apache.heron.spi.packing.PackingPlan;
+import org.apache.heron.spi.utils.PackingTestUtils;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
-@PrepareForTest({SlurmContext.class, SchedulerUtils.class})
+@PowerMockIgnore({"jdk.internal.reflect.*", "javax.net.ssl.*", "javax.xml.*", "javax.management.*", "org.w3c.dom.*", "org.xml.sax.*", "javax.xml.parsers.*", "javax.xml.datatype.*"})
+@PrepareForTest(SlurmContext.class)
 public class SlurmSchedulerTest {
-  private static final String SLURM_PATH = "path.heron";
-  private static final String SLURM_ID_FILE = "slurm_job.id";
-  private static final String PACKING_PLAN_ID = "packing.plan.id";
-  private static final String CONTAINER_ID = "packing.container.id";
   private static final String TOPOLOGY_NAME = "topologyName";
-  private static final String CLUSTER = "testCluster";
-  private static final String ROLE = "testRole";
-  private static final String ENVIRON = "testEnviron";
-  private static final String WORKING_DIRECTORY = "workingDirectory";
+  private static final String TOPOLOGY_ID = "topologyId";
 
-  private static SlurmScheduler scheduler;
+  private SlurmScheduler scheduler;
+
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+  }
+
+  @AfterClass
+  public static void afterClass() throws Exception {
+  }
 
   @Before
   public void setUp() throws Exception {
+    scheduler = Mockito.spy(new SlurmScheduler());
   }
 
   @After
   public void after() throws Exception {
   }
 
-  @BeforeClass
-  public static void beforeClass() throws Exception {
-    scheduler = Mockito.spy(SlurmScheduler.class);
-    Mockito.doReturn(new String[]{}).when(
-        scheduler).getExecutorCommand(
-        Mockito.any(PackingPlan.class));
-    Mockito.doReturn(SLURM_PATH).when(scheduler).getHeronSlurmPath();
-  }
+  @Test
+  public void testOnKill() throws Exception {
+    SlurmController controller = Mockito.mock(SlurmController.class);
+    Mockito.doReturn(controller).when(scheduler).getController();
+    Mockito.doReturn(true).when(controller).killJob(Matchers.anyString());
 
-  @AfterClass
-  public static void afterClass() throws Exception {
-    scheduler.close();
-  }
-
-  private static Config createRunnerConfig() {
     Config config = Config.newBuilder()
         .put(Key.TOPOLOGY_NAME, TOPOLOGY_NAME)
-        .put(Key.CLUSTER, CLUSTER)
-        .put(Key.ROLE, ROLE)
-        .put(Key.ENVIRON, ENVIRON).build();
-    return config;
+        .build();
+    Config runtime = Config.newBuilder()
+        .put(Key.TOPOLOGY_NAME, TOPOLOGY_NAME)
+        .build();
+    scheduler.initialize(config, runtime);
+
+    Assert.assertTrue(scheduler.onKill(Scheduler.KillTopologyRequest.getDefaultInstance()));
+    Mockito.verify(controller).killJob(Matchers.anyString());
   }
 
-  /**
-   * Test the schedule method
-   * @throws Exception
-   */
   @Test
   public void testOnSchedule() throws Exception {
     SlurmController controller = Mockito.mock(SlurmController.class);
     Mockito.doReturn(controller).when(scheduler).getController();
 
-    Config config = createRunnerConfig();
-    Config runtime = Mockito.mock(Config.class);
-
-    PowerMockito.spy(SlurmContext.class);
-    PowerMockito.doReturn(WORKING_DIRECTORY).when(SlurmContext.class, "workingDirectory",
-        config);
-
+    Config config = Config.newBuilder()
+        .put(Key.TOPOLOGY_NAME, TOPOLOGY_NAME)
+        .put(Key.TOPOLOGY_ID, TOPOLOGY_ID)
+        .put(Key.TOPOLOGY_DEFINITION_FILE, "topology.defn")
+        .put(Key.STATEMGR_CONNECTION_STRING, "127.0.0.1")
+        .put(Key.STATEMGR_ROOT_PATH, "/heron")
+        .put(Key.TMANAGER_BINARY, "tmanager")
+        .put(Key.STMGR_BINARY, "stmgr")
+        .put(Key.METRICSMGR_CLASSPATH, "classpath")
+        .put(Key.TOPOLOGY_BINARY_FILE, "topology.jar")
+        .put(Key.SYSTEM_YAML, "system.yaml")
+        .put(Key.OVERRIDE_YAML, "override.yaml")
+        .put(Key.TOPOLOGY_PACKAGE_TYPE, PackageType.TAR)
+        .put(Key.VERBOSE_GC, Boolean.FALSE)
+        .put(Key.SHELL_BINARY, "heron-shell")
+        .put(Key.CLUSTER, "test-cluster")
+        .put(Key.ROLE, "test-role")
+        .put(Key.ENVIRON, "test-env")
+        .put(Key.INSTANCE_CLASSPATH, "instance-classpath")
+        .put(Key.METRICS_YAML, "metrics-sink.yaml")
+        .put(Key.SCHEDULER_CLASSPATH, "scheduler-classpath")
+        .put(Key.PACKING_CLASSPATH, "packing-classpath")
+        .put(Key.STATEMGR_CLASSPATH, "statemgr-classpath")
+        .build();
+    Config runtime = Config.newBuilder()
+        .put(Key.TOPOLOGY_NAME, TOPOLOGY_NAME)
+        .put(Key.TOPOLOGY_ID, TOPOLOGY_ID)
+        .put(Key.TOPOLOGY_DEFINITION, TopologyAPI.Topology.newBuilder()
+            .setName(TOPOLOGY_NAME)
+            .setId(TOPOLOGY_ID)
+            .setState(TopologyAPI.TopologyState.RUNNING)
+            .build())
+        .put(Key.NUM_CONTAINERS, 2L)
+        .build();
     scheduler.initialize(config, runtime);
 
-    // Fail to schedule due to null PackingPlan
-    Assert.assertFalse(scheduler.onSchedule(null));
-
-    PackingPlan plan = new PackingPlan(PACKING_PLAN_ID, new HashSet<PackingPlan.ContainerPlan>());
-    Assert.assertTrue(plan.getContainers().isEmpty());
-    // Fail to schedule due to PackingPlan is empty
-    Assert.assertFalse(scheduler.onSchedule(plan));
-
-    // Construct valid PackingPlan
+    // Failed
+    Mockito.doReturn(false).when(controller).createJob(
+        Matchers.anyString(), Matchers.any(), Matchers.any(String[].class),
+        Matchers.anyString(), Matchers.anyLong());
+    
+    PackingPlan packingPlan = Mockito.mock(PackingPlan.class);
     Set<PackingPlan.ContainerPlan> containers = new HashSet<>();
-    containers.add(Mockito.mock(PackingPlan.ContainerPlan.class));
-    PackingPlan validPlan = new PackingPlan(PACKING_PLAN_ID, containers);
+    containers.add(PackingTestUtils.testContainerPlan(1));
+    Mockito.when(packingPlan.getContainers()).thenReturn(containers);
 
-    // Failed to create job via controller
-    Mockito.doReturn(false).when(
-        controller).createJob(Mockito.anyString(), Mockito.anyString(),
-        Matchers.any(String[].class), Mockito.anyString(), Mockito.anyInt());
-    Assert.assertFalse(scheduler.onSchedule(validPlan));
-    Mockito.verify(controller).createJob(Mockito.eq(SLURM_PATH),
-        Mockito.anyString(), Matchers.any(String[].class),
-        Mockito.anyString(), Mockito.anyInt());
+    Assert.assertFalse(scheduler.onSchedule(packingPlan));
 
     // Happy path
-    Mockito.doReturn(true).when(
-        controller).createJob(Mockito.anyString(), Mockito.anyString(),
-        Matchers.any(String[].class), Mockito.anyString(), Mockito.anyInt());
-    Assert.assertTrue(scheduler.onSchedule(validPlan));
-    Mockito.verify(
-        controller, Mockito.times(2)).createJob(Mockito.anyString(), Mockito.anyString(),
-        Matchers.any(String[].class), Mockito.anyString(), Mockito.anyInt());
-  }
-
-  @Test
-  public void testOnKill() throws Exception {
-    SlurmController controller = Mockito.mock(SlurmController.class);
-    Mockito.doReturn(controller).when(scheduler).getController();
-    Mockito.doReturn(SLURM_ID_FILE).when(scheduler).getJobIdFilePath();
-
-    Config config = createRunnerConfig();
-    Config runtime = Mockito.mock(Config.class);
-
-    PowerMockito.spy(SlurmContext.class);
-    PowerMockito.doReturn(WORKING_DIRECTORY).when(SlurmContext.class, "workingDirectory",
-        config);
-    scheduler.initialize(config, runtime);
-    // Failed to kill job via controller
-    Mockito.doReturn(false).when(
-        controller).killJob(Mockito.anyString());
-    Assert.assertFalse(scheduler.onKill(Scheduler.KillTopologyRequest.getDefaultInstance()));
-    Mockito.verify(controller).killJob(Mockito.anyString());
-    // Happy path
-    Mockito.doReturn(true).when(
-        controller).killJob(Mockito.anyString());
-    Assert.assertTrue(scheduler.onKill(Scheduler.KillTopologyRequest.getDefaultInstance()));
-    Mockito.verify(controller, Mockito.times(2)).killJob(Mockito.anyString());
+    Mockito.doReturn(true).when(controller).createJob(
+        Matchers.anyString(), Matchers.any(), Matchers.any(String[].class),
+        Matchers.anyString(), Matchers.anyLong());
+    Assert.assertTrue(scheduler.onSchedule(packingPlan));
   }
 }

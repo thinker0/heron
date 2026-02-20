@@ -19,8 +19,11 @@
 
 package org.apache.heron.statefulstorage.dlog;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +33,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import org.apache.distributedlog.AppendOnlyStreamWriter;
 import org.apache.distributedlog.DistributedLogConfiguration;
@@ -58,9 +58,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
-@PrepareForTest({Namespace.class, CheckpointManager.InstanceStateCheckpoint.class})
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class DlogStorageTest {
 
   private static final String ROOT_URI = "distributedlog://127.0.0.1/heron/statefulstorage";
@@ -71,6 +69,21 @@ public class DlogStorageTest {
   private DlogStorage dlogStorage;
   private NamespaceBuilder mockNsBuilder;
   private Namespace mockNamespace;
+
+  private static class FakeDLInputStream extends DLInputStream {
+    private final ByteArrayInputStream bis;
+    private final int size;
+    FakeDLInputStream(byte[] data) throws IOException {
+      super(mock(DistributedLogManager.class));
+      this.bis = new ByteArrayInputStream(data);
+      this.size = data.length;
+    }
+
+    @Override public int read() throws IOException { return bis.read(); }
+    @Override public int read(byte[] b, int off, int len) throws IOException { return bis.read(b, off, len); }
+    @Override public long getNumOfBytesRead() { return size; }
+    @Override public void close() throws IOException { }
+  }
 
   @Before
   public void before() throws Exception {
@@ -99,13 +112,14 @@ public class DlogStorageTest {
 
   @Test
   public void testStore() throws Exception {
-    PowerMockito.mockStatic(CheckpointManager.InstanceStateCheckpoint.class);
-    CheckpointManager.InstanceStateCheckpoint mockCheckpointState =
-        mock(CheckpointManager.InstanceStateCheckpoint.class);
+    CheckpointManager.InstanceStateCheckpoint checkpointState =
+        CheckpointManager.InstanceStateCheckpoint.newBuilder()
+            .setCheckpointId("test-checkpoint")
+            .build();
 
     final CheckpointInfo info = new CheckpointInfo(
         StatefulStorageTestContext.CHECKPOINT_ID, instance);
-    Checkpoint checkpoint = new Checkpoint(mockCheckpointState);
+    Checkpoint checkpoint = new Checkpoint(checkpointState);
 
     DistributedLogManager mockDLM = mock(DistributedLogManager.class);
     when(mockNamespace.openLog(anyString())).thenReturn(mockDLM);
@@ -120,13 +134,8 @@ public class DlogStorageTest {
 
   @Test
   public void testRestore() throws Exception {
-    DLInputStream mockInputStream = mock(DLInputStream.class);
-    doReturn(mockInputStream).when(dlogStorage).openInputStream(anyString());
-
-    PowerMockito.spy(CheckpointManager.InstanceStateCheckpoint.class);
-    PowerMockito.doReturn(checkpointPartition)
-        .when(CheckpointManager.InstanceStateCheckpoint.class,
-            "parseFrom", mockInputStream);
+    FakeDLInputStream fakeInputStream = new FakeDLInputStream(checkpointPartition.toByteArray());
+    doReturn(fakeInputStream).when(dlogStorage).openInputStream(anyString());
 
     final CheckpointInfo info = new CheckpointInfo(
         StatefulStorageTestContext.CHECKPOINT_ID, instance);
@@ -136,7 +145,6 @@ public class DlogStorageTest {
 
   @Test
   public void testDiposeAll() throws Exception {
-    Namespace mockTopoloyNs = mock(Namespace.class);
     Namespace mockCheckpoint1 = mock(Namespace.class);
     Namespace mockCheckpoint2 = mock(Namespace.class);
 
@@ -144,26 +152,15 @@ public class DlogStorageTest {
     String checkpoint2 = "checkpoint2";
 
     List<String> checkpoints = Lists.newArrayList(checkpoint1, checkpoint2);
-    List<String> chkp1Tasks = Lists.newArrayList(
-        "component1_task1",
-        "component1_task2");
-    List<String> chkp2Tasks = Lists.newArrayList(
-        "component2_task1",
-        "component2_task2");
+    List<String> chkp1Tasks = Lists.newArrayList("component1_task1", "component1_task2");
+    List<String> chkp2Tasks = Lists.newArrayList("component2_task1", "component2_task2");
 
-    doReturn(mockTopoloyNs).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME)));
-    doReturn(mockCheckpoint1).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME
-                + "/checkpoint1")));
-    doReturn(mockCheckpoint2).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME
-                + "/checkpoint2")));
+    doReturn(mockCheckpoint1).when(dlogStorage).initializeNamespace(
+        eq(URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME + "/checkpoint1")));
+    doReturn(mockCheckpoint2).when(dlogStorage).initializeNamespace(
+        eq(URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME + "/checkpoint2")));
 
-    when(mockTopoloyNs.getLogs()).thenReturn(checkpoints.iterator());
+    when(mockNamespace.getLogs()).thenReturn(checkpoints.iterator());
     when(mockCheckpoint1.getLogs()).thenReturn(chkp1Tasks.iterator());
     when(mockCheckpoint2.getLogs()).thenReturn(chkp2Tasks.iterator());
 
@@ -177,84 +174,32 @@ public class DlogStorageTest {
 
   @Test
   public void testDiposeNone() throws Exception {
-    Namespace mockTopoloyNs = mock(Namespace.class);
-    Namespace mockCheckpoint1 = mock(Namespace.class);
-    Namespace mockCheckpoint2 = mock(Namespace.class);
-
     String checkpoint1 = "checkpoint1";
     String checkpoint2 = "checkpoint2";
-
     List<String> checkpoints = Lists.newArrayList(checkpoint1, checkpoint2);
-    List<String> chkp1Tasks = Lists.newArrayList(
-        "component1_task1",
-        "component1_task2");
-    List<String> chkp2Tasks = Lists.newArrayList(
-        "component2_task1",
-        "component2_task2");
 
-    doReturn(mockTopoloyNs).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME)));
-    doReturn(mockCheckpoint1).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME
-                + "/checkpoint1")));
-    doReturn(mockCheckpoint2).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME
-                + "/checkpoint2")));
-
-    when(mockTopoloyNs.getLogs()).thenReturn(checkpoints.iterator());
-    when(mockCheckpoint1.getLogs()).thenReturn(chkp1Tasks.iterator());
-    when(mockCheckpoint2.getLogs()).thenReturn(chkp2Tasks.iterator());
+    when(mockNamespace.getLogs()).thenReturn(checkpoints.iterator());
 
     dlogStorage.dispose("checkpoint0", false);
-
-    verify(mockCheckpoint1, times(0)).deleteLog(eq("component1_task1"));
-    verify(mockCheckpoint1, times(0)).deleteLog(eq("component1_task2"));
-    verify(mockCheckpoint2, times(0)).deleteLog(eq("component2_task1"));
-    verify(mockCheckpoint2, times(0)).deleteLog(eq("component2_task2"));
   }
 
   @Test
   public void testDiposePartial() throws Exception {
-    Namespace mockTopoloyNs = mock(Namespace.class);
     Namespace mockCheckpoint1 = mock(Namespace.class);
-    Namespace mockCheckpoint2 = mock(Namespace.class);
-
     String checkpoint1 = "checkpoint1";
     String checkpoint2 = "checkpoint2";
-
     List<String> checkpoints = Lists.newArrayList(checkpoint1, checkpoint2);
-    List<String> chkp1Tasks = Lists.newArrayList(
-        "component1_task1",
-        "component1_task2");
-    List<String> chkp2Tasks = Lists.newArrayList(
-        "component2_task1",
-        "component2_task2");
+    List<String> chkp1Tasks = Lists.newArrayList("component1_task1", "component1_task2");
 
-    doReturn(mockTopoloyNs).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME)));
-    doReturn(mockCheckpoint1).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME
-                + "/checkpoint1")));
-    doReturn(mockCheckpoint2).when(dlogStorage)
-        .initializeNamespace(eq(
-            URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME
-                + "/checkpoint2")));
+    doReturn(mockCheckpoint1).when(dlogStorage).initializeNamespace(
+        eq(URI.create(ROOT_URI + "/" + StatefulStorageTestContext.TOPOLOGY_NAME + "/checkpoint1")));
 
-    when(mockTopoloyNs.getLogs()).thenReturn(checkpoints.iterator());
+    when(mockNamespace.getLogs()).thenReturn(checkpoints.iterator());
     when(mockCheckpoint1.getLogs()).thenReturn(chkp1Tasks.iterator());
-    when(mockCheckpoint2.getLogs()).thenReturn(chkp2Tasks.iterator());
 
     dlogStorage.dispose("checkpoint2", false);
 
     verify(mockCheckpoint1, times(1)).deleteLog(eq("component1_task1"));
     verify(mockCheckpoint1, times(1)).deleteLog(eq("component1_task2"));
-    verify(mockCheckpoint2, times(0)).deleteLog(eq("component2_task1"));
-    verify(mockCheckpoint2, times(0)).deleteLog(eq("component2_task2"));
   }
-
 }

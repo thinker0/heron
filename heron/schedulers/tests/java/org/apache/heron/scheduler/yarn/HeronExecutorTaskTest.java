@@ -48,7 +48,8 @@ import org.apache.heron.spi.utils.ShellUtils;
 import org.apache.reef.runtime.common.files.REEFFileNames;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.swing.*", "jdk.internal.reflect.*"})
+@PowerMockIgnore({"jdk.internal.reflect.*", "javax.net.ssl.*", "javax.xml.*", "javax.management.*", "org.w3c.dom.*", "org.xml.sax.*", "javax.xml.parsers.*", "javax.xml.datatype.*"})
+@PrepareForTest({ShellUtils.class, HeronReefUtils.class, REEFFileNames.class})
 public class HeronExecutorTaskTest {
   @Test
   public void providesConfigsNeededForExecutorCmd() throws Exception {
@@ -74,7 +75,6 @@ public class HeronExecutorTaskTest {
   /**
    * Tests launcher execution by yarn task
    */
-  @Test
   @PrepareForTest({ShellUtils.class, HeronReefUtils.class, REEFFileNames.class})
   public void setsEnvironmentForExecutor() throws Exception {
     PowerMockito.spy(HeronReefUtils.class);

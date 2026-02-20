@@ -47,7 +47,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
+
 
 public class DlogUploaderTest {
 
@@ -57,12 +58,14 @@ public class DlogUploaderTest {
   private DLUploader uploader;
   private NamespaceBuilder nsBuilder;
   private Copier copier;
+  private static final String TOPOLOGY_PACKAGE_FILE = "/tmp/topology.tar.gz";
+  private static final String TOPOLOGY_NAME = "test-topology";
 
   @Before
   public void setUp() throws Exception {
-    config = mock(Config.class);
-    when(config.getStringValue(eq(DLContext.DL_TOPOLOGIES_NS_URI)))
-        .thenReturn(DL_URI);
+    config = Config.newBuilder().put(DLContext.DL_TOPOLOGIES_NS_URI, DL_URI).put("heron.topology.package.file", TOPOLOGY_PACKAGE_FILE).put("heron.topology.name", TOPOLOGY_NAME).build();
+    
+        
     nsBuilder = mock(NamespaceBuilder.class);
     when(nsBuilder.clientId(anyString())).thenReturn(nsBuilder);
     when(nsBuilder.conf(any(DistributedLogConfiguration.class))).thenReturn(nsBuilder);

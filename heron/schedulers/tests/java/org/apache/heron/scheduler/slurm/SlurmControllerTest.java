@@ -39,7 +39,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.apache.heron.spi.utils.ShellUtils;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
+@PowerMockIgnore({"jdk.internal.reflect.*", "javax.net.ssl.*", "javax.xml.*", "javax.management.*", "org.w3c.dom.*", "org.xml.sax.*", "javax.xml.parsers.*", "javax.xml.datatype.*"})
 @PrepareForTest({SlurmContext.class, ShellUtils.class})
 public class SlurmControllerTest {
   private static final String WORKING_DIRECTORY = "workingDirectory";
@@ -71,13 +71,13 @@ public class SlurmControllerTest {
     String[] expectedCommand = new String[]{"sbatch", "-N", "1", "--ntasks=1", "slurm", "heron"};
 
     // Failed
-    Mockito.doReturn(false).when(controller).runProcess(Matchers.anyString(),
+    Mockito.doReturn(false).when(controller).runProcess(Matchers.any(),
         Matchers.any(String[].class), Matchers.any(StringBuilder.class));
     Assert.assertFalse(controller.createJob(slurmFileName, "slurm",
         expectedCommand, WORKING_DIRECTORY, 1));
 
     // Happy path
-    Mockito.doReturn(true).when(controller).runProcess(Matchers.anyString(),
+    Mockito.doReturn(true).when(controller).runProcess(Matchers.any(),
         Matchers.any(String[].class), Matchers.any(StringBuilder.class));
     Assert.assertTrue(controller.createJob(slurmFileName, "slurm",
         expectedCommand, WORKING_DIRECTORY, 1));
@@ -88,15 +88,15 @@ public class SlurmControllerTest {
     // fail if job ids are not set
     List<String> jobIds = new ArrayList<>(Arrays.asList("0000"));
     String jobIdFile = "job.id";
-    Mockito.doReturn(new ArrayList<>()).when(controller).readFromFile(Matchers.anyString());
+    Mockito.doReturn(new ArrayList<>()).when(controller).readFromFile(Matchers.any());
     Assert.assertFalse(controller.killJob(jobIdFile));
     // fail if process creation fails
-    Mockito.doReturn(false).when(controller).runProcess(Matchers.anyString(),
+    Mockito.doReturn(false).when(controller).runProcess(Matchers.any(),
         Matchers.any(String[].class), Matchers.any(StringBuilder.class));
     Mockito.doReturn(jobIds).when(controller).readFromFile(jobIdFile);
     Assert.assertFalse(controller.killJob(jobIdFile));
     // happy path
-    Mockito.doReturn(true).when(controller).runProcess(Matchers.anyString(),
+    Mockito.doReturn(true).when(controller).runProcess(Matchers.any(),
         Matchers.any(String[].class), Matchers.any(StringBuilder.class));
     Mockito.doReturn(jobIds).when(controller).readFromFile(jobIdFile);
     Assert.assertTrue(controller.killJob(jobIdFile));

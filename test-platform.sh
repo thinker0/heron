@@ -28,17 +28,9 @@ function copyFileToDest() {
   cp $1 $2
 }
 
-echo "Building heron with version $HERON_VERSION for platform $TARGET_PLATFORM"
-
-mkdir -p $SCRATCH_DIR
-cd $SCRATCH_DIR
-
-echo "Extracting source"
-tar -C . -xzf $SOURCE_TARBALL
-
 bazel version
 ./bazel_configure.py
-bazel clean
+# bazel clean
 
 echo "UnitTest"
 bazel test -c opt \

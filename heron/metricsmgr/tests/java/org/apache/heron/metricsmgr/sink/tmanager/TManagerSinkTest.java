@@ -92,7 +92,7 @@ public class TManagerSinkTest {
 
     String filePath =
         Paths.get(runFiles,
-                  "/org_apache_heron/heron/config/src/yaml/conf/test/test_heron_internals.yaml")
+                  "/_main/heron/config/src/yaml/conf/test/test_heron_internals.yaml")
              .toString();
     SystemConfig.Builder sb = SystemConfig.newBuilder(true)
         .putAll(filePath, true)

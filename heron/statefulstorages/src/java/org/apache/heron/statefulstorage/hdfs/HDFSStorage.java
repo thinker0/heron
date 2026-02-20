@@ -49,6 +49,10 @@ public class HDFSStorage implements IStatefulStorage {
   private FileSystem fileSystem;
   private String topologyName;
 
+  FileSystem getFileSystem(Configuration hadoopConfig) throws IOException {
+    return FileSystem.get(hadoopConfig);
+  }
+
   @Override
   public void init(String topology, final Map<String, Object> conf)
       throws StatefulStorageException {
@@ -63,7 +67,7 @@ public class HDFSStorage implements IStatefulStorage {
     Configuration hadoopConfig = new Configuration();
 
     try {
-      fileSystem = FileSystem.get(hadoopConfig);
+      fileSystem = getFileSystem(hadoopConfig);
       LOG.info("Hadoop FileSystem URI: " + fileSystem.getUri()
           + " ; Home Dir: " + fileSystem.getHomeDirectory());
     } catch (IOException e) {

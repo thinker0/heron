@@ -21,7 +21,7 @@ package org.apache.heron.uploader.localfs;
 
 final class LocalFileSystemConstantsTest {
   public static final String TEST_DATA_PATH =
-      "/org_apache_heron/heron/uploaders/tests/java/org/apache/heron/uploader/localfs/testdata";
+      "/_main/heron/uploaders/tests/java/org/apache/heron/uploader/localfs/testdata";
 
   private LocalFileSystemConstantsTest() {
   }

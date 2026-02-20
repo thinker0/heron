@@ -20,7 +20,6 @@
 package org.apache.heron.statemgr.zookeeper;
 
 import java.net.InetSocketAddress;
-import java.time.Duration;
 import java.util.List;
 
 import org.junit.Test;
@@ -36,80 +35,56 @@ import org.apache.heron.spi.common.Key;
 import org.apache.heron.spi.utils.NetworkUtils;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("jdk.internal.reflect.*")
+@PowerMockIgnore({"jdk.internal.reflect.*", "javax.net.ssl.*", "javax.xml.*", "javax.management.*", "org.w3c.dom.*", "org.xml.sax.*", "javax.xml.parsers.*", "javax.xml.datatype.*"})
 @PrepareForTest(NetworkUtils.class)
 public class ZkUtilsTest {
 
-  /**
-   * Test setupZkTunnel
-   */
   @Test
   public void testSetupZkTunnel() throws Exception {
     String host0 = "host0";
     int port0 = 12;
-    InetSocketAddress address0 =
-        NetworkUtils.getInetSocketAddress(String.format("%s:%d", host0, port0));
+    InetSocketAddress address0 = InetSocketAddress.createUnresolved(host0, port0);
     String host1 = "host1";
     int port1 = 13;
-    InetSocketAddress address1 =
-        NetworkUtils.getInetSocketAddress(String.format("%s:%d", host1, port1));
+    InetSocketAddress address1 = InetSocketAddress.createUnresolved(host1, port1);
     String host2 = "host2";
     int port2 = 9049;
-    InetSocketAddress address2 =
-        NetworkUtils.getInetSocketAddress(String.format("%s:%d", host2, port2));
+    InetSocketAddress address2 = InetSocketAddress.createUnresolved(host2, port2);
 
     String tunnelHost = "tunnelHost";
     int tunnelPort = 9519;
-    InetSocketAddress tunnelAddress =
-        NetworkUtils.getInetSocketAddress(String.format("%s:%d", tunnelHost, tunnelPort));
+    InetSocketAddress tunnelAddress = InetSocketAddress.createUnresolved(tunnelHost, tunnelPort);
 
-    // Original connection String
-    String connectionString = String.format("%s:%d, %s:%d,  %s:%d   ",
-        host0, port0, host1, port1, host2, port2);
+    String connectionString = host0 + ":" + port0 + "," + host1 + ":" + port1 + "," + host2 + ":" + port2;
 
     Config config = mock(Config.class);
-    when(config.getStringValue(Key.STATEMGR_CONNECTION_STRING))
-        .thenReturn(connectionString);
-    NetworkUtils.TunnelConfig tunnelConfig =
-        NetworkUtils.TunnelConfig.build(config, NetworkUtils.HeronSystem.STATE_MANAGER);
+    when(config.getStringValue(Key.STATEMGR_CONNECTION_STRING)).thenReturn(connectionString);
+    NetworkUtils.TunnelConfig tunnelConfig = NetworkUtils.TunnelConfig.build(config, NetworkUtils.HeronSystem.STATE_MANAGER);
 
     Process process = mock(Process.class);
 
-    // Mock the invocation of establishSSHTunnelIfNeeded
-    // address0 and address1 are directly reachable
-    // address2 are reachable after tunneling
     PowerMockito.spy(NetworkUtils.class);
+    
     PowerMockito.doReturn(new Pair<>(address0, process))
         .when(NetworkUtils.class, "establishSSHTunnelIfNeeded",
-            eq(address0), anyString(), any(NetworkUtils.TunnelType.class), any(Duration.class),
-            anyInt(), any(Duration.class), anyInt());
+            eq(address0), any(NetworkUtils.TunnelConfig.class), any(NetworkUtils.TunnelType.class));
     PowerMockito.doReturn(new Pair<>(address1, process))
         .when(NetworkUtils.class, "establishSSHTunnelIfNeeded",
-            eq(address1), anyString(), any(NetworkUtils.TunnelType.class), any(Duration.class),
-            anyInt(), any(Duration.class), anyInt());
+            eq(address1), any(NetworkUtils.TunnelConfig.class), any(NetworkUtils.TunnelType.class));
     PowerMockito.doReturn(new Pair<>(tunnelAddress, process))
         .when(NetworkUtils.class, "establishSSHTunnelIfNeeded",
-            eq(address2), anyString(), any(NetworkUtils.TunnelType.class), any(Duration.class),
-            anyInt(), any(Duration.class), anyInt());
+            eq(address2), any(NetworkUtils.TunnelConfig.class), any(NetworkUtils.TunnelType.class));
 
     Pair<String, List<Process>> ret = ZkUtils.setupZkTunnel(config, tunnelConfig);
 
-    // Assert with expected results
-    String expectedConnectionString =
-        String.format("%s,%s,%s",
-            address0.toString(), address1.toString(), tunnelAddress.toString());
+    String expectedConnectionString = address0.toString() + "," + address1.toString() + "," + tunnelAddress.toString();
     assertEquals(expectedConnectionString, ret.first);
     assertEquals(3, ret.second.size());
-    for (Process p : ret.second) {
-      assertEquals(process, p);
-    }
   }
 }

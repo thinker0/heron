@@ -38,7 +38,16 @@ public class ScpUploaderTest {
 
   @Before
   public void setUp() throws Exception {
-    config = Mockito.mock(Config.class);
+    config = Config.newBuilder()
+        .put(ScpContext.HERON_UPLOADER_SCP_OPTIONS, "scp_options")
+        .put(ScpContext.HERON_UPLOADER_SSH_OPTIONS, "ssh_options")
+        .put(ScpContext.HERON_UPLOADER_SCP_CONNECTION, "scp_connection")
+        .put(ScpContext.HERON_UPLOADER_SSH_CONNECTION, "ssh_connection")
+        .put(ScpContext.HERON_UPLOADER_SCP_DIR_PATH, "/tmp/heron/repository")
+        .put("heron.topology.package.file", "/tmp/topology.tar.gz")
+        .put("heron.topology.name", "test-topology")
+        .put("heron.config.verbose", Boolean.FALSE)
+        .build();
   }
 
   @After
@@ -51,32 +60,16 @@ public class ScpUploaderTest {
     ScpUploader uploader = Mockito.spy(new ScpUploader());
 
     // exception
-    Mockito.doReturn(null).when(config).getStringValue(ScpContext.HERON_UPLOADER_SCP_OPTIONS);
+    Config emptyConfig = Config.newBuilder().build();
     exception.expect(RuntimeException.class);
+    uploader.initialize(emptyConfig);
     uploader.getScpController();
+  }
 
-    // exception
-    Mockito.doReturn(null).when(config).getStringValue(ScpContext.HERON_UPLOADER_SSH_OPTIONS);
-    exception.expect(RuntimeException.class);
-    uploader.getScpController();
-    // exception
-    Mockito.doReturn(null).when(config).getStringValue(ScpContext.HERON_UPLOADER_SCP_CONNECTION);
-    exception.expect(RuntimeException.class);
-    uploader.getScpController();
-    // exception
-    Mockito.doReturn(null).when(config).getStringValue(ScpContext.HERON_UPLOADER_SSH_CONNECTION);
-    exception.expect(RuntimeException.class);
-    uploader.getScpController();
-
-    // happy path
-    Mockito.doReturn(Mockito.anyString()).when(config).getStringValue(
-        ScpContext.HERON_UPLOADER_SCP_OPTIONS);
-    Mockito.doReturn(Mockito.anyString()).when(config).getStringValue(
-        ScpContext.HERON_UPLOADER_SCP_CONNECTION);
-    Mockito.doReturn(Mockito.anyString()).when(config).getStringValue(
-        ScpContext.HERON_UPLOADER_SSH_OPTIONS);
-    Mockito.doReturn(Mockito.anyString()).when(config).getStringValue(
-        ScpContext.HERON_UPLOADER_SSH_CONNECTION);
+  @Test
+  public void testConfigurationSuccess() throws Exception {
+    ScpUploader uploader = Mockito.spy(new ScpUploader());
+    uploader.initialize(config);
     Assert.assertNotNull(uploader.getScpController());
   }
 
