@@ -24,7 +24,7 @@ if [  $# -lt 1 ]
     echo "$0 PAT_TO_APACHE_RAT_JAR"
     echo ""
     echo "Note: Apache Rat package can be downloaded from:"
-    echo "  http://ftp.wayne.edu/apache/creadur/apache-rat-0.13/apache-rat-0.13-bin.tar.gz"
+    echo "  http://ftp.wayne.edu/apache/creadur/apache-rat-0.17/apache-rat-0.17-bin.tar.gz"
     exit 1
   fi
 
