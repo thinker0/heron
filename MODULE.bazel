@@ -33,3 +33,17 @@ python.toolchain(
     is_default = True,
     python_version = "3.9",
 )
+
+pex_deps = use_extension("//tools/rules/pex:pex_deps.bzl", "pex_deps")
+use_repo(
+    pex_deps,
+    "urllib3_pkg",
+    "certifi_pkg",
+    "idna_pkg",
+    "charset_pkg",
+    "pytest_pkg",
+    "wheel_pkg",
+    "pex_pkg",
+    "requests_pkg",
+    "setuptools_pkg",
+)
