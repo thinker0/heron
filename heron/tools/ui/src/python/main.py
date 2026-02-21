@@ -259,7 +259,7 @@ def file_stats_page(
           "topology": topology,
           "container": container,
           "path": path,
-          "filestats": data,
+          "filestats": data or {},
           "baseUrl": base_url,
           "request": request,
       },

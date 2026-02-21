@@ -103,7 +103,12 @@ async def get_container_file_listing(  # pylint: disable=too-many-arguments
   url = utils.make_shell_filestats_url(stmgr.host, stmgr.shell_port, path)
   async with httpx.AsyncClient() as client:
     response = await client.get(url)
-    return response.json()
+    if response.status_code == 200:
+      try:
+        return response.json()
+      except Exception:
+        return {}
+    return {}
 
 
 @router.get("/runtimestate")
@@ -327,3 +332,4 @@ async def get_container_heron_memory_histogram(
   url = f"{base_url}/histo/{pid}"
   async with httpx.AsyncClient() as client:
     return (await client.get(url)).json()
+

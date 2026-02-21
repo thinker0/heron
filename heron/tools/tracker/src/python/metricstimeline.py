@@ -84,8 +84,12 @@ async def get_metrics_timeline(
 
   # Form and send the http request.
   url = f"http://{tmanager.host}:{tmanager.stats_port}/stats"
-  async with httpx.AsyncClient() as client:
-    result = await client.post(url, data=request_parameters.SerializeToString())
+  try:
+    async with httpx.AsyncClient() as client:
+      result = await client.post(url, data=request_parameters.SerializeToString(), timeout=10.0)
+  except Exception as e:
+    # Return an empty response if Tmanager is unreachable
+    return tmanager_pb2.MetricResponse()
 
   # Check the response code - error if it is in 400s or 500s
   if result.status_code >= 400:
@@ -127,3 +131,4 @@ async def get_metrics_timeline(
       component=component_name,
       timeline=timeline,
   )
+
