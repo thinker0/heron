@@ -19,16 +19,7 @@ workspace(name = "org_apache_heron")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
-RULES_JVM_EXTERNAL_TAG = "6.3"
 
-RULES_JVM_EXTERNAL_SHA = "c18a69d784bcd851be95897ca0eca0b57dc86bb02e62402f15736df44160eb02"
-
-http_archive(
-    name = "rules_jvm_external",
-    sha256 = RULES_JVM_EXTERNAL_SHA,
-    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
-    url = "https://github.com/bazel-contrib/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG),
-)
 
 load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
 
@@ -122,7 +113,7 @@ maven_install(
         "org.glassfish.hk2.external:aopalliance-repackaged:2.5.0-b32",
         "org.apache.commons:commons-compress:1.26.1",
         "org.apache.commons:commons-lang3:3.12.0",
-        "commons-io:commons-io:2.4",
+        "commons-io:commons-io:2.14.0",
         "commons-collections:commons-collections:3.2.1",
         "commons-cli:commons-cli:1.3.1",
         "org.apache.commons:commons-compress:1.26.1",
@@ -265,12 +256,7 @@ http_archive(
 # end protobuf dependencies for C++ and Java
 
 # 3rdparty C++ dependencies
-http_archive(
-    name = "com_github_gflags_gflags",
-    sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
-    strip_prefix = "gflags-2.2.2",
-    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
-)
+
 
 http_archive(
     name = "org_libevent_libevent",
@@ -306,13 +292,7 @@ http_archive(
     urls = ["https://github.com/gperftools/gperftools/releases/download/gperftools-2.10/gperftools-2.10.tar.gz"],
 )
 
-http_archive(
-    name = "com_github_google_glog",
-    # build_file = "@//:third_party/glog/glog.BUILD",
-    sha256 = "21bc744fb7f2fa701ee8db339ded7dce4f975d0d55837a97be7d46e8382dea5a",
-    strip_prefix = "glog-0.5.0",
-    urls = ["https://github.com/google/glog/archive/v0.5.0.zip"],
-)
+
 
 http_archive(
     name = "com_github_cereal",
