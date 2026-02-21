@@ -19,16 +19,16 @@
 set -o errexit
 
 # Assuming Apache Rat is downloaded and extracted to:
-#   ~/Downloads/apache-rat-0.13/apache-rat-0.13.jar.
+#   ~/Downloads/apache-rat-0.17/apache-rat-0.17.jar.
 # Apache Rat can be downloaded fromm this link:
-#   http://ftp.wayne.edu/apache/creadur/apache-rat-0.13/apache-rat-0.13-bin.tar.gz
+#   http://ftp.wayne.edu/apache/creadur/apache-rat-0.17/apache-rat-0.17-bin.tar.gz
 if [  $# -lt 1 ]
   then
     echo "Usage:"
     echo "$0 PAT_TO_APACHE_RAT_JAR"
     echo ""
     echo "Note: Apache Rat package can be downloaded from:"
-    echo "  http://ftp.wayne.edu/apache/creadur/apache-rat-0.13/apache-rat-0.13-bin.tar.gz"
+    echo "  http://ftp.wayne.edu/apache/creadur/apache-rat-0.17/apache-rat-0.17-bin.tar.gz"
     exit 1
   fi
 
@@ -36,4 +36,4 @@ RAT_JAR_PATH=$1
 
 echo "Looking for Rat jar"
 ls $RAT_JAR_PATH
-java -jar $RAT_JAR_PATH . -E .rat-excludes
+java -jar $RAT_JAR_PATH . --input-exclude-file .rat-excludes
