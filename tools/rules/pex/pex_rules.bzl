@@ -485,7 +485,7 @@ def pex_binary(name, platforms = None, **kwargs):
         platforms = select({
             "//tools/rules/pex:macos_arm64": ["macosx-11.0-arm64-cp-39-cp39"],
             "//tools/rules/pex:macos_x86_64": ["macosx-10.9-x86_64-cp-39-cp39"],
-            "//tools/rules/pex:linux_x86_64": ["linux-x86_64-cp-39-cp39"],
+            "//tools/rules/pex:linux_x86_64": [],
             "//conditions:default": [],
         })
     
