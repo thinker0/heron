@@ -118,7 +118,7 @@ installing them manually.
 ### Compling and installing libtool
 
 ```bash
-$ wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
+$ wget https://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
 $ tar -xvf libtool-2.4.6.tar.gz
 $ cd libtool-2.4.6
 $ ./configure
@@ -129,7 +129,7 @@ $ sudo make install
 ### Compiling and installing libunwind
 
 ```bash
-$ wget http://download.savannah.gnu.org/releases/libunwind/libunwind-1.1.tar.gz
+$ wget https://download.savannah.gnu.org/releases/libunwind/libunwind-1.1.tar.gz
 $ tar -xvf libunwind-1.1.tar.gz
 $ cd libunwind-1.1
 $ ./configure
@@ -161,7 +161,7 @@ $ sudo yum install gcc gcc-c++ kernel-devel wget unzip zlib-devel zip git automa
 ### Step 2 --- Install libunwind from source
 
 ```bash
-$ wget http://download.savannah.gnu.org/releases/libunwind/libunwind-1.1.tar.gz
+$ wget https://download.savannah.gnu.org/releases/libunwind/libunwind-1.1.tar.gz
 $ tar xvf libunwind-1.1.tar.gz
 $ cd libunwind-1.1
 $ ./configure
