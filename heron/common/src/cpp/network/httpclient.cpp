@@ -93,6 +93,7 @@ sp_int32 HTTPClient::SendRequest(OutgoingHTTPRequest* _request,
   struct evhttp_request* httprequest = CreateUnderlyingRequest(_request, combo);
   if (!httprequest) {
     delete combo;
+    delete _request;
     return SP_NOTOK;
   }
   inflight_urls_[_request] = std::move(cb);
@@ -100,6 +101,8 @@ sp_int32 HTTPClient::SendRequest(OutgoingHTTPRequest* _request,
                           _request->query().c_str()) != 0) {
     inflight_urls_.erase(_request);
     delete combo;
+    delete _request;
+    evhttp_request_free(httprequest);
     return SP_NOTOK;
   }
   return SP_OK;
